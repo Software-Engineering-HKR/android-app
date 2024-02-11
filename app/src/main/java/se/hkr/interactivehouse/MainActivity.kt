@@ -1,9 +1,12 @@
 package se.hkr.interactivehouse
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,11 +36,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import se.hkr.interactivehouse.ui.theme.InteractiveHouseTheme
 
 class MainActivity : ComponentActivity() {
@@ -48,25 +54,36 @@ class MainActivity : ComponentActivity() {
             var checkedLight = remember { mutableStateOf(false) }
 
             InteractiveHouseTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    //ScaffoldExample()
+                        // A surface container using the 'background' color from the theme
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            //ScaffoldExample()
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    "Welcome user!",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = Color.Black,
+                                    modifier = Modifier.align(Alignment.Start)
+                                )
+                                DeviceCard(key = "light", checked = checkedLight)
+                                SensorCard(
+                                    text = "Sensor",
+                                    navigateTo = SensorScreen::class.java
+                                )
+                                }
+                            }
+                        }
+                    }
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
-                    ) {
-                        DeviceCard(key = "light", checked = checkedLight)
                     }
                 }
-            }
-        }
-    }
-}
 
 @Composable
 fun DeviceSwitch(key: String, checked: MutableState<Boolean>) {
@@ -88,6 +105,7 @@ fun DeviceCard(key: String, checked: MutableState<Boolean>) {
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
         )
     ) {
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -132,6 +150,41 @@ fun DeviceCard(key: String, checked: MutableState<Boolean>) {
             ) {
                 DeviceSwitch(key = key, checked = checked)
             }
+        }
+    }
+}
+
+@Composable
+fun SensorCard(
+    text: String,
+    navigateTo: Class<*>,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    ElevatedCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 15.dp)
+            .clickable {  context.startActivity(Intent(context, navigateTo))
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text.uppercase(),
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center,
+                fontSize = 27.sp
+
+            )
         }
     }
 }
