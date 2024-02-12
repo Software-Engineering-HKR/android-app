@@ -41,9 +41,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import se.hkr.interactivehouse.network.WSHelper
 import se.hkr.interactivehouse.ui.theme.InteractiveHouseTheme
 
 class MainActivity : ComponentActivity() {
@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             var checkedLight = remember { mutableStateOf(false) }
+            var wsHelper = WSHelper(ledStatus = checkedLight, savedInstanceState = savedInstanceState)
 
             InteractiveHouseTheme {
                         // A surface container using the 'background' color from the theme
@@ -67,12 +68,12 @@ class MainActivity : ComponentActivity() {
                                     .padding(16.dp)
                             ) {
                                 Text(
-                                    "Welcome user!",
+                                    "Welcome, user!",
                                     style = MaterialTheme.typography.headlineMedium,
                                     color = Color.Black,
                                     modifier = Modifier.align(Alignment.Start)
                                 )
-                                DeviceCard(key = "light", checked = checkedLight)
+                                DeviceCard(key = "light", checked = checkedLight, wsHelper)
                                 SensorCard(
                                     text = "Sensor",
                                     navigateTo = SensorScreen::class.java
@@ -81,21 +82,20 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-
-                    }
-                }
+    }
+}
 
 @Composable
-fun DeviceSwitch(key: String, checked: MutableState<Boolean>) {
+fun DeviceSwitch(key: String, checked: MutableState<Boolean>, wsHelper: WSHelper) {
     //dbRead(key, checked)
     Switch(
         modifier = Modifier.semantics { contentDescription = "Demo" },
         checked = checked.value,
-        onCheckedChange = { checked.value = it }) //onCheckedChange = { checked.value = it; dbUpdate(key, checked.value) })
+        onCheckedChange = { checked.value = it; wsHelper.toggleDevice(checked, "led") }) //onCheckedChange = { checked.value = it; dbUpdate(key, checked.value) })
 }
 
 @Composable
-fun DeviceCard(key: String, checked: MutableState<Boolean>) {
+fun DeviceCard(key: String, checked: MutableState<Boolean>, wsHelper: WSHelper) {
     ElevatedCard(
         Modifier
             .fillMaxWidth()
@@ -148,7 +148,7 @@ fun DeviceCard(key: String, checked: MutableState<Boolean>) {
                 modifier = Modifier
                     .padding(16.dp),
             ) {
-                DeviceSwitch(key = key, checked = checked)
+                DeviceSwitch(key = key, checked = checked, wsHelper = wsHelper)
             }
         }
     }
