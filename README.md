@@ -4,8 +4,7 @@
 
 # Smart House Android App
 
-### Group 1 for DA330A VT24 Software Engineering @ HKR
-##### Spring Semester 2024
+### Group 1 for DA330A VT24 Software Engineering @ HKR | Spring Semester 2024
 
 
 
