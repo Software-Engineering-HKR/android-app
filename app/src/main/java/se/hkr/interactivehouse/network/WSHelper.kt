@@ -31,7 +31,8 @@ import java.io.IOException
     }
 }*/
 
-class WSHelper(savedInstanceState: Bundle?, ledStatus: MutableState<Boolean>) {
+// TODO: refactor to work for all devices, waiting on backend.
+class WSHelper(ledStatus: MutableState<Boolean>) {
     private val client = OkHttpClient()
 
     init {

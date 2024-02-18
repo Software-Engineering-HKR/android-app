@@ -29,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,16 +42,18 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import se.hkr.interactivehouse.network.WSHelper
+import se.hkr.interactivehouse.data.Device
 import se.hkr.interactivehouse.ui.theme.InteractiveHouseTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-            var checkedLight = remember { mutableStateOf(false) }
-            var wsHelper = WSHelper(ledStatus = checkedLight, savedInstanceState = savedInstanceState)
+            // devices is a list of all devices to display and control from the main screen and shall be used to access their state and other properties
+            val devices = listOf(
+                Device(name = "whiteLed", endpoint = "led", displayName = "White Light", status = remember {mutableStateOf(false)}),
+                Device(name = "yellowLed", endpoint = "led2", displayName = "Yellow Light", status = remember {mutableStateOf(false)})
+                )
 
             InteractiveHouseTheme {
                         // A surface container using the 'background' color from the theme
@@ -73,7 +74,11 @@ class MainActivity : ComponentActivity() {
                                     color = Color.Black,
                                     modifier = Modifier.align(Alignment.Start)
                                 )
-                                DeviceCard(key = "light", checked = checkedLight, wsHelper)
+
+                                for(device in devices) {
+                                    DeviceCard(device)
+                                }
+
                                 SensorCard(
                                     text = "Sensor",
                                     navigateTo = SensorScreen::class.java
@@ -86,16 +91,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun DeviceSwitch(key: String, checked: MutableState<Boolean>, wsHelper: WSHelper) {
+fun DeviceSwitch(device: Device) {
     //dbRead(key, checked)
     Switch(
         modifier = Modifier.semantics { contentDescription = "Demo" },
-        checked = checked.value,
-        onCheckedChange = { checked.value = it; wsHelper.toggleDevice(checked, "led") }) //onCheckedChange = { checked.value = it; dbUpdate(key, checked.value) })
+        checked = device.status.value,
+        onCheckedChange = { device.status.value = it; device.wsHelper.toggleDevice(device.status, device.endpoint) }) //onCheckedChange = { checked.value = it; dbUpdate(key, checked.value) })
 }
 
 @Composable
-fun DeviceCard(key: String, checked: MutableState<Boolean>, wsHelper: WSHelper) {
+fun DeviceCard(device: Device) {
     ElevatedCard(
         Modifier
             .fillMaxWidth()
@@ -119,8 +124,8 @@ fun DeviceCard(key: String, checked: MutableState<Boolean>, wsHelper: WSHelper) 
             ) {
                 Column(
                     horizontalAlignment = Alignment.Start,
-                    modifier = Modifier
-                        .padding(16.dp),
+                    //modifier = Modifier
+                        //.padding(16.dp),
                 ) {
                     Icon(imageVector = Icons.Rounded.House, contentDescription = null)
                 }
@@ -131,12 +136,12 @@ fun DeviceCard(key: String, checked: MutableState<Boolean>, wsHelper: WSHelper) 
                         .padding(16.dp),
                 ) {
                     Text(
-                        text = key.uppercase(),
+                        text = device.displayName.uppercase(),
                         style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.align(Alignment.Start),
                     )
                     Text(
-                        text = checked.value.toString().uppercase(),
+                        text = device.status.value.toString().uppercase(),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.align(Alignment.Start),
                     )
@@ -145,10 +150,10 @@ fun DeviceCard(key: String, checked: MutableState<Boolean>, wsHelper: WSHelper) 
 
             Column(
                 horizontalAlignment = Alignment.End,
-                modifier = Modifier
-                    .padding(16.dp),
+                //modifier = Modifier
+                    //.padding(16.dp),
             ) {
-                DeviceSwitch(key = key, checked = checked, wsHelper = wsHelper)
+                DeviceSwitch(device)
             }
         }
     }
