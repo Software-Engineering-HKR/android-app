@@ -1,4 +1,4 @@
-package se.hkr.interactivehouse
+package se.hkr.smarthouse
 
 import android.content.Intent
 import android.os.Bundle
@@ -42,8 +42,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import se.hkr.interactivehouse.data.Device
-import se.hkr.interactivehouse.ui.theme.InteractiveHouseTheme
+import se.hkr.smarthouse.data.Device
+import se.hkr.smarthouse.ui.theme.InteractiveHouseTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

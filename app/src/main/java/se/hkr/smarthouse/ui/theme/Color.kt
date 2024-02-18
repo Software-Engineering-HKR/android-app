@@ -1,4 +1,4 @@
-package se.hkr.interactivehouse.ui.theme
+package se.hkr.smarthouse.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

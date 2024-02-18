@@ -1,6 +1,5 @@
-package se.hkr.interactivehouse.network
+package se.hkr.smarthouse.network
 
-import android.os.Bundle
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import okhttp3.Call

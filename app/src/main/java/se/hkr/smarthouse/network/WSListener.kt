@@ -1,4 +1,4 @@
-package se.hkr.interactivehouse.network
+package se.hkr.smarthouse.network
 
 import android.util.Log
 import okhttp3.Response

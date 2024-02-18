@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "se.hkr.interactivehouse"
+    namespace = "se.hkr.smarthouse"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "se.hkr.interactivehouse"
+        applicationId = "se.hkr.smarthouse"
         minSdk = 30
         targetSdk = 33
         versionCode = 1

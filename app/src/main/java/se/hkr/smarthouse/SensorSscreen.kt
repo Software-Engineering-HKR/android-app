@@ -1,4 +1,4 @@
-package se.hkr.interactivehouse
+package se.hkr.smarthouse
 
 import android.graphics.Color
 import android.os.Bundle

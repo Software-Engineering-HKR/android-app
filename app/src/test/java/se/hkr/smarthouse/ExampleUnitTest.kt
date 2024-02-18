@@ -1,4 +1,4 @@
-package se.hkr.interactivehouse
+package se.hkr.smarthouse
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package se.hkr.interactivehouse
+package se.hkr.smarthouse
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
