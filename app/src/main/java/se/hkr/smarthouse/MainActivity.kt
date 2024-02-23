@@ -43,17 +43,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.hkr.smarthouse.data.Device
+import se.hkr.smarthouse.network.WSHelper
 import se.hkr.smarthouse.ui.theme.InteractiveHouseTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WSHelper.initConnection("ws://192.168.50.60:8080")
+
         setContent {
-            // devices is a list of all devices to display and control from the main screen and shall be used to access their state and other properties
-            val devices = listOf(
-                Device(name = "whiteLed", endpoint = "led", displayName = "White Light", status = remember {mutableStateOf(false)}),
-                Device(name = "yellowLed", endpoint = "led2", displayName = "Yellow Light", status = remember {mutableStateOf(false)})
-                )
+            WSHelper.devices.apply {
+                add(Device(name = "led", endpoint = "led", displayName = "White Light", status = remember { mutableStateOf(false) }))
+                add(Device(name = "yellow-led", endpoint = "led2", displayName = "Yellow Light", status = remember { mutableStateOf(false) }))
+            }
 
             InteractiveHouseTheme {
                         // A surface container using the 'background' color from the theme
@@ -75,10 +78,9 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.align(Alignment.Start)
                                 )
 
-                                for(device in devices) {
-                                    DeviceCard(device)
+                                WSHelper.devices.forEach { device ->
+                                    DeviceCard(device = device)
                                 }
-
                                 SensorCard(
                                     text = "Sensor",
                                     navigateTo = SensorScreen::class.java
@@ -88,6 +90,10 @@ class MainActivity : ComponentActivity() {
                         }
                     }
     }
+    override fun onDestroy() {
+        super.onDestroy()
+        WSHelper.closeConnection()
+    }
 }
 
 @Composable
@@ -96,7 +102,11 @@ fun DeviceSwitch(device: Device) {
     Switch(
         modifier = Modifier.semantics { contentDescription = "Demo" },
         checked = device.status.value,
-        onCheckedChange = { device.status.value = it; device.wsHelper.toggleDevice(device.status, device.endpoint) }) //onCheckedChange = { checked.value = it; dbUpdate(key, checked.value) })
+        onCheckedChange = { isChecked ->
+            // Assuming toggleDevice is now a static method in WSHelper
+            WSHelper.toggleDevice(device.status, device.endpoint)
+            device.status.value = isChecked // Optimistically update the UI
+        })
 }
 
 @Composable

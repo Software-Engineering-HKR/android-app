@@ -70,4 +70,11 @@ class SensorScreen : ComponentActivity() {
         mainLayout.addView(buttonSensorOn)
         mainLayout.addView(buttonSensorOff)
 
-        setContentView(mainLayout) } }
+
+
+        setContentView(mainLayout)
+
+
+    }
+
+}
