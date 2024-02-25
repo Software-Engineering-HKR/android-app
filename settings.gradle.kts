@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Interactive House"
+rootProject.name = "Smart House"
 include(":app")
