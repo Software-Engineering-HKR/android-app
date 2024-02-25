@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.network.WSHelper
-import se.hkr.smarthouse.ui.theme.InteractiveHouseTheme
+import se.hkr.smarthouse.ui.theme.SmartHouseTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,9 +56,10 @@ class MainActivity : ComponentActivity() {
             WSHelper.devices.apply {
                 add(Device(name = "led", endpoint = "led", displayName = "White Light", status = remember { mutableStateOf(false) }))
                 add(Device(name = "yellow-led", endpoint = "led2", displayName = "Yellow Light", status = remember { mutableStateOf(false) }))
+                add(Device(name = "fan", endpoint = "fan", displayName = "Fan", status = remember { mutableStateOf(false) }))
             }
 
-            InteractiveHouseTheme {
+            SmartHouseTheme {
                         // A surface container using the 'background' color from the theme
                         Surface(
                             modifier = Modifier.fillMaxSize(),
