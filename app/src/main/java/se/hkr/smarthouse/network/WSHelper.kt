@@ -3,6 +3,7 @@ package se.hkr.smarthouse.network
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -14,6 +15,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.json.JSONObject
 import se.hkr.smarthouse.data.Device
+import se.hkr.smarthouse.data.Sensor
 import java.io.IOException
 
 /*class WSHelper() {
@@ -38,6 +40,10 @@ class WSHelper(ledStatus: MutableState<Boolean>) {
         private val client = OkHttpClient()
         private var webSocket: WebSocket? = null
         val devices = mutableStateListOf<Device>()
+        val sensors = mutableStateListOf<Sensor>().apply {
+            add(Sensor(name = "motion_sensor", endpoint = "motion_sensor_endpoint", displayName = "Motion Sensor", status = mutableStateOf(false)))
+            add(Sensor(name = "moisture_sensor", endpoint = "moisture_sensor_endpoint", displayName = "Moisture Sensor", status = mutableStateOf(false)))
+        }
 
         fun initConnection(URL: String) {
             val request = Request.Builder().url(URL).build()
@@ -67,6 +73,9 @@ class WSHelper(ledStatus: MutableState<Boolean>) {
             webSocket?.close(1000, "Closing Connection")
         }
 
+        fun updateSensorStateByName(name: String, newState: Boolean) {
+            sensors.find { it.name == name }?.status?.value = newState
+        }
 
         public fun toggleDevice(currentStatus: MutableState<Boolean>, deviceEndpoint: String) {
             val newStatus = if (currentStatus.value) "0" else "1"
