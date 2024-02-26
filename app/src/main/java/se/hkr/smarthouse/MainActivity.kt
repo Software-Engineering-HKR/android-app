@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.hkr.smarthouse.data.Device
@@ -57,7 +58,7 @@ class MainActivity : ComponentActivity() {
                 add(Device(name = "led", endpoint = "led", displayName = "White Light", status = remember { mutableStateOf(false) }))
                 add(Device(name = "yellow-led", endpoint = "led2", displayName = "Yellow Light", status = remember { mutableStateOf(false) }))
                 add(Device(name = "fan", endpoint = "fan", displayName = "Fan", status = remember { mutableStateOf(false) }))
-                add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }))
+                add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
             }
 
             SmartHouseTheme {
@@ -153,7 +154,7 @@ fun DeviceCard(device: Device) {
                         modifier = Modifier.align(Alignment.Start),
                     )
                     Text(
-                        text = device.status.value.toString().uppercase(),
+                        text = (if (device.status.value) device.statusMaskTrue else device.statusMaskFalse).uppercase(),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.align(Alignment.Start),
                     )
