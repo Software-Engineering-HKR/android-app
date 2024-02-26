@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
                 add(Device(name = "led", endpoint = "led", displayName = "White Light", status = remember { mutableStateOf(false) }))
                 add(Device(name = "yellow-led", endpoint = "led2", displayName = "Yellow Light", status = remember { mutableStateOf(false) }))
                 add(Device(name = "fan", endpoint = "fan", displayName = "Fan", status = remember { mutableStateOf(false) }))
+                add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }))
             }
 
             SmartHouseTheme {
@@ -115,7 +116,7 @@ fun DeviceCard(device: Device) {
     ElevatedCard(
         Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer

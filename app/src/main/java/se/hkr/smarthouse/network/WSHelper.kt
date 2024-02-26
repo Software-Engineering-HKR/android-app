@@ -33,7 +33,7 @@ import java.io.IOException
 }*/
 
 // TODO: refactor to work for all devices, waiting on backend.
-class WSHelper(ledStatus: MutableState<Boolean>) {
+class WSHelper() {
     companion object {
         private val client = OkHttpClient()
         private var webSocket: WebSocket? = null
@@ -47,11 +47,7 @@ class WSHelper(ledStatus: MutableState<Boolean>) {
                     try {
                         val json = JSONObject(text)
                         devices.forEach { device ->
-                            when (device.name) {
-                                "led" -> device.status.value = json.optBoolean("led", device.status.value)
-                                "yellow-led" -> device.status.value = json.optBoolean("yellow-led", device.status.value)
-                                "fan" -> device.status.value = json.optBoolean("fan", device.status.value)
-                            }
+                            device.status.value = json.optBoolean(device.name, device.status.value)
                         }
                     } catch (e: Exception) {
                         Log.e("WSHelper", "Parsing JSON failed", e)
