@@ -50,6 +50,7 @@ class WSHelper(ledStatus: MutableState<Boolean>) {
                             when (device.name) {
                                 "led" -> device.status.value = json.optBoolean("led", device.status.value)
                                 "yellow-led" -> device.status.value = json.optBoolean("yellow-led", device.status.value)
+                                "fan" -> device.status.value = json.optBoolean("fan", device.status.value)
                             }
                         }
                     } catch (e: Exception) {
