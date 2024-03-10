@@ -3,6 +3,9 @@ package se.hkr.smarthouse.network
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -42,13 +45,24 @@ class WSHelper() {
         fun initConnection(URL: String) {
             val request = Request.Builder().url(URL).build()
             webSocket = client.newWebSocket(request, object : WebSocketListener() {
+
                 override fun onMessage(webSocket: WebSocket, text: String) {
                     Log.d("WSHelper", "WebSocket Message: $text")
                     try {
+                        // json structure: {devices:[{}], sensors: [{}]}
                         val json = JSONObject(text)
-                        devices.forEach { device ->
-                            device.status.value = json.optBoolean(device.name, device.status.value)
+                        val jsonDevicesArray = json.getJSONArray("devices")
+                        var jsonDevices = JSONObject()
+
+                        for (i in 0 until jsonDevicesArray.length()) {
+                            val deviceObject = jsonDevicesArray.getJSONObject(i)
+                            jsonDevices.put(deviceObject.getString("name"), deviceObject.getBoolean("status"))
                         }
+
+                        runBlocking {
+                            fetchDeviceStatusFromJSONObject(jsonDevices)
+                        }
+
                     } catch (e: Exception) {
                         Log.e("WSHelper", "Parsing JSON failed", e)
                     }
@@ -58,6 +72,15 @@ class WSHelper() {
                     Log.e("WSHelper", "WebSocket Failure: $t", t)
                 }
             })
+        }
+
+        suspend fun fetchDeviceStatusFromJSONObject(json: JSONObject) {
+            withContext(Dispatchers.Main) {
+                devices.forEach { device ->
+                    var test = json.optBoolean(device.name, device.status.value)
+                    device.status.value = test
+                }
+            }
         }
 
         fun closeConnection() {
@@ -73,7 +96,7 @@ class WSHelper() {
             //updateStatus(!(currentStatus.value))
 
             val request = Request.Builder()
-                .url("http://192.168.50.60:5000/api/${deviceEndpoint}") // Adjust the URL/port as necessary
+                .url("http://192.168.1.103:5000/api/${deviceEndpoint}") // Adjust the URL/port as necessary
                 .post(jsonRequestBody)
                 .build()
 

@@ -51,16 +51,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WSHelper.initConnection("ws://192.168.50.60:8080")
-
         setContent {
+
             WSHelper.devices.apply {
                 add(Device(name = "led", endpoint = "led", displayName = "White Light", status = remember { mutableStateOf(false) }))
-                add(Device(name = "yellow-led", endpoint = "led2", displayName = "Yellow Light", status = remember { mutableStateOf(false) }))
+                add(Device(name = "yellow-led", endpoint = "yellow-led", displayName = "Yellow Light", status = remember { mutableStateOf(false) }))
                 add(Device(name = "fan", endpoint = "fan", displayName = "Fan", status = remember { mutableStateOf(false) }))
                 add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
                 add(Device(name = "window", endpoint = "window", displayName = "Window", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
             }
+
+            WSHelper.initConnection("ws://192.168.1.103:8080")
 
             SmartHouseTheme {
                         // A surface container using the 'background' color from the theme
