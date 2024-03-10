@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                 add(Device(name = "window", endpoint = "window", displayName = "Window", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
             }
 
-            WSHelper.initConnection("ws://192.168.1.103:8080")
+            WSHelper.initConnection("ws://${BuildConfig.SERVER_IP}:8080")
 
             SmartHouseTheme {
                         // A surface container using the 'background' color from the theme

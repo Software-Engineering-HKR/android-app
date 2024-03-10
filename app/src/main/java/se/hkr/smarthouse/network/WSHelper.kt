@@ -16,6 +16,7 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.json.JSONObject
+import se.hkr.smarthouse.BuildConfig
 import se.hkr.smarthouse.data.Device
 import java.io.IOException
 
@@ -96,7 +97,7 @@ class WSHelper() {
             //updateStatus(!(currentStatus.value))
 
             val request = Request.Builder()
-                .url("http://192.168.1.103:5000/api/${deviceEndpoint}") // Adjust the URL/port as necessary
+                .url("http://${BuildConfig.SERVER_IP}:5000/api/${deviceEndpoint}") // Adjust the URL/port as necessary INSIDE build.gradle
                 .post(jsonRequestBody)
                 .build()
 
