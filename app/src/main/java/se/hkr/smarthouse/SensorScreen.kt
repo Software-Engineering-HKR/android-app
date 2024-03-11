@@ -1,130 +1,85 @@
 package se.hkr.smarthouse
 
-import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.core.content.ContextCompat
-import android.graphics.drawable.GradientDrawable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
 
 class SensorScreen : ComponentActivity() {
-
-    private lateinit var motionSensorStateIndicator: TextView
-    private lateinit var moistureSensorStateIndicator: TextView
-    private var updateJob: Job? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val mainLayout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_HORIZONTAL
-            setBackgroundColor(Color.WHITE)
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
-        }
-
-        val backButton = Button(this).apply {
-            text = "Back"
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-            ).apply {
-
-                topMargin = 15
-                leftMargin = 10
-                gravity = Gravity.START
-            }
-            setOnClickListener {
-                onBackPressed()
-            }
-        }
-        mainLayout.addView(backButton)
-
-        val title = TextView(this).apply {
-            text = "Sensor"
-            textSize = 30f
-            setTextColor(ContextCompat.getColor(this@SensorScreen, R.color.black))
-
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
-                gravity = Gravity.START
-                setMargins(80, 90, 0, 0)
-            }
-        }
-        mainLayout.addView(title)
-
-        motionSensorStateIndicator = createSensorStateIndicator("Motion Sensor")
-        moistureSensorStateIndicator = createSensorStateIndicator("Moisture Sensor")
-
-        mainLayout.addView(motionSensorStateIndicator)
-        mainLayout.addView(moistureSensorStateIndicator)
-
-        setContentView(mainLayout)
-
-
-        startObservingSensorStates()
-    }
-    override fun onDestroy() {
-        super.onDestroy()
-        updateJob?.cancel()
-    }
-
-    private fun startObservingSensorStates() {
-        updateJob = CoroutineScope(Dispatchers.Main).launch {
-            while (isActive) {
-
-                val motionSensor = WSHelper.devices.find { it.name == "motion_sensor" }
-                val moistureSensor = WSHelper.devices.find { it.name == "moisture_sensor" }
-
-                motionSensor?.let {
-                    updateSensorState(motionSensorStateIndicator, it.status.value)
-                }
-                moistureSensor?.let {
-                    updateSensorState(moistureSensorStateIndicator, it.status.value)
-                }
-
-                delay(5000)
-            }
+        setContent {
+            SensorScreenContent()
         }
     }
+}
 
+@Composable
+fun SensorScreenContent() {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp)
+    ) {
+        BackButton()
+        Column(
+            verticalArrangement = Arrangement.spacedBy(15.dp)
+        ){ DisplaySensors()}
 
-    private fun createSensorStateIndicator(initialText: String): TextView = TextView(this).apply {
-        text = initialText
-        textSize = 19f
-        gravity = Gravity.CENTER
-        setTextColor(Color.WHITE)
+    }
+}
 
-        layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            200 // Explicit height
-        ).apply {
-            topMargin = 50
-            bottomMargin = 10
-            leftMargin = 60
-            rightMargin = 60
+@Composable
+fun BackButton() {
+    val context = LocalContext.current
+    Button(onClick = { (context as? ComponentActivity)?.finish() }) {
+        Text("Back")
+    }
+}
 
-            // Create a GradientDrawable with rounded corners
-        val backgroundDrawable = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            setColor(Color.LTGRAY)
-            cornerRadius = 80f
+@Composable
+fun DisplaySensors() {
+    WSHelper.sensors.forEach { sensor ->
+        SensorIndicator(sensor = sensor)
+    }
+}
+
+@Composable
+fun SensorIndicator(sensor: Sensor) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 0.4.dp), // Adds vertical spacing between cards
+        shape = MaterialTheme.shapes.medium // Provides rounded corners
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(30.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = sensor.displayName, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = if (sensor.status.value) "ON" else "OFF",
+                color = if (sensor.status.value) Color.Blue else Color.Gray,
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
-
-        background = backgroundDrawable
     }
-    }
-
-    private fun updateSensorState(indicator: TextView, sensorOn: Boolean) {
-        indicator.text =
-            if (sensorOn) "${indicator.text.split(":")[0]}: ON" else "${indicator.text.split(":")[0]}: OFF"
-        indicator.setBackgroundColor(if (sensorOn) Color.BLUE else Color.GRAY)
-    }}
+}
