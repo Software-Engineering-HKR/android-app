@@ -22,11 +22,15 @@ android {
 
     buildTypes {
         release {
+            buildConfigField("String", "SERVER_IP", "\"192.168.1.103\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug{
+            buildConfigField("String", "SERVER_IP", "\"192.168.1.103\"")
         }
     }
     compileOptions {
@@ -38,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"

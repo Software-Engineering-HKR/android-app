@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.House
@@ -40,24 +42,32 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.network.WSHelper
+import se.hkr.smarthouse.ui.composables.Devices
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WSHelper.initConnection("ws://192.168.50.60:8080")
-
         setContent {
+            val scrollState = rememberScrollState()
+
             WSHelper.devices.apply {
                 add(Device(name = "led", endpoint = "led", displayName = "White Light", status = remember { mutableStateOf(false) }))
-                add(Device(name = "yellow-led", endpoint = "led2", displayName = "Yellow Light", status = remember { mutableStateOf(false) }))
+                add(Device(name = "yellow-led", endpoint = "yellow-led", displayName = "Yellow Light", status = remember { mutableStateOf(false) }))
                 add(Device(name = "fan", endpoint = "fan", displayName = "Fan", status = remember { mutableStateOf(false) }))
+                add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
+                add(Device(name = "window", endpoint = "window", displayName = "Window", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
             }
+
+            WSHelper.initConnection("ws://${BuildConfig.SERVER_IP}:8080")
+
+            val LCDText = remember { mutableStateOf("Your message here")}
 
             SmartHouseTheme {
                         // A surface container using the 'background' color from the theme
@@ -69,6 +79,7 @@ class MainActivity : ComponentActivity() {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
+                                    .verticalScroll(state = scrollState)
                                     .fillMaxSize()
                                     .padding(16.dp)
                             ) {
@@ -79,9 +90,13 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.align(Alignment.Start)
                                 )
 
+                                val Composables = Devices()
+                                Composables.TextInputCard(LCDText)
+
                                 WSHelper.devices.forEach { device ->
                                     DeviceCard(device = device)
                                 }
+
                                 SensorCard(
                                     text = "Sensor",
                                     navigateTo = SensorScreen::class.java
@@ -115,7 +130,7 @@ fun DeviceCard(device: Device) {
     ElevatedCard(
         Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -152,7 +167,7 @@ fun DeviceCard(device: Device) {
                         modifier = Modifier.align(Alignment.Start),
                     )
                     Text(
-                        text = device.status.value.toString().uppercase(),
+                        text = (if (device.status.value) device.statusMaskTrue else device.statusMaskFalse).uppercase(),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.align(Alignment.Start),
                     )
@@ -181,7 +196,8 @@ fun SensorCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 15.dp)
-            .clickable {  context.startActivity(Intent(context, navigateTo))
+            .clickable {
+                context.startActivity(Intent(context, navigateTo))
             },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
