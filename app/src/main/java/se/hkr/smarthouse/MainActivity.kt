@@ -64,7 +64,6 @@ class MainActivity : ComponentActivity() {
                 add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
                 add(Device(name = "window", endpoint = "window", displayName = "Window", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
             }
-
             WSHelper.initConnection("ws://${BuildConfig.SERVER_IP}:8080")
 
             val LCDText = remember { mutableStateOf("Your message here")}
