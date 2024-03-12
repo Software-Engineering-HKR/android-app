@@ -44,7 +44,11 @@ class WSHelper(ledStatus: MutableState<Boolean>) {
         val devices = mutableStateListOf<Device>()
         val sensors = mutableStateListOf<Sensor>().apply {
             add(Sensor(name = "motion_sensor", endpoint = "motion_sensor_endpoint", displayName = "Motion Sensor", status = mutableStateOf(false)))
-            add(Sensor(name = "moisture_sensor", endpoint = "moisture_sensor_endpoint", displayName = "Moisture Sensor", status = mutableStateOf(false)))
+           // add(Sensor(name = "moisture_sensor", endpoint = "moisture_sensor_endpoint", displayName = "Moisture Sensor", status = mutableStateOf(false)))
+            add(Sensor(name = "photocell_sensor", endpoint = "photocell_sensor_endpoint", displayName = "Photocell Sensor", status = mutableStateOf(false)))
+            add(Sensor(name = "gas_sensor", endpoint = "gas_sensor_endpoint", displayName = "Gas Sensor", status = mutableStateOf(false)))
+            add(Sensor(name = "steam_sensor", endpoint = "steam_sensor_endpoint", displayName = "Steam Sensor", status = mutableStateOf(false)))
+            add(Sensor(name = "soil_humidity_sensor", endpoint = "soil_humidity_sensor_endpoint", displayName = "Soil humidity Sensor", status = mutableStateOf(false)))
         }
 
         fun initConnection(URL: String) {
