@@ -74,9 +74,19 @@ class WSHelper(ledStatus: MutableState<Boolean>) {
             })
         }
 
+        suspend fun fetchDeviceStatusFromJSONObject(json: JSONObject) {
+            withContext(Dispatchers.Main) {
+                devices.forEach { device ->
+                    var newStatus = json.optBoolean(device.name, device.status.value)
+                    device.status.value = newStatus
+                }
+            }
+        }
+
         fun updateSensorStateByName(name: String, newState: Boolean) {
             sensors.find { it.name == name }?.status?.value = newState
         }
+
         fun closeConnection() {
             webSocket?.close(1000, "Closing Connection")
         }
