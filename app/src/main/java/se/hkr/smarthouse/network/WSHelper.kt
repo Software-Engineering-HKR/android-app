@@ -78,8 +78,8 @@ class WSHelper() {
         suspend fun fetchDeviceStatusFromJSONObject(json: JSONObject) {
             withContext(Dispatchers.Main) {
                 devices.forEach { device ->
-                    var test = json.optBoolean(device.name, device.status.value)
-                    device.status.value = test
+                    var newStatus = json.optBoolean(device.name, device.status.value)
+                    device.status.value = newStatus
                 }
             }
         }
