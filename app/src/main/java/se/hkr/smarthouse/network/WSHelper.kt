@@ -3,8 +3,8 @@ package se.hkr.smarthouse.network
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
@@ -16,8 +16,8 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.json.JSONObject
-import se.hkr.smarthouse.BuildConfig
 import se.hkr.smarthouse.data.Device
+import se.hkr.smarthouse.data.Sensor
 import java.io.IOException
 
 /*class WSHelper() {
@@ -37,32 +37,33 @@ import java.io.IOException
 }*/
 
 // TODO: refactor to work for all devices, waiting on backend.
-class WSHelper() {
+class WSHelper(ledStatus: MutableState<Boolean>) {
     companion object {
         private val client = OkHttpClient()
         private var webSocket: WebSocket? = null
         val devices = mutableStateListOf<Device>()
+        val sensors = mutableStateListOf<Sensor>().apply {
+            add(Sensor(name = "motion_sensor", endpoint = "motion_sensor_endpoint", displayName = "Motion Sensor", status = mutableStateOf(false)))
+            add(Sensor(name = "moisture_sensor", endpoint = "moisture_sensor_endpoint", displayName = "Moisture Sensor", status = mutableStateOf(false)))
+        }
 
         fun initConnection(URL: String) {
             val request = Request.Builder().url(URL).build()
             webSocket = client.newWebSocket(request, object : WebSocketListener() {
-
                 override fun onMessage(webSocket: WebSocket, text: String) {
                     Log.d("WSHelper", "WebSocket Message: $text")
                     try {
-                        // json structure: {devices:[{}], sensors: [{}]}
                         val json = JSONObject(text)
-                        val jsonDevicesArray = json.getJSONArray("devices")
-                        var jsonDevices = JSONObject()
-
-                        for (i in 0 until jsonDevicesArray.length()) {
-                            val deviceObject = jsonDevicesArray.getJSONObject(i)
-                            jsonDevices.put(deviceObject.getString("name"), deviceObject.getBoolean("status"))
+                        devices.forEach { device ->
+                            when (device.name) {
+                                "led" -> device.status.value = json.optBoolean("led", device.status.value)
+                                "yellow-led" -> device.status.value = json.optBoolean("yellow-led", device.status.value)
+                            }
                         }
-
-                        runBlocking {
-                            fetchDeviceStatusFromJSONObject(jsonDevices)
-                        }
+                        // New sensor update logic
+                       val sensorName = json.optString("sensor_name")
+                        val status = json.optBoolean("status")
+                        updateSensorStateByName(sensorName, status)
 
                     } catch (e: Exception) {
                         Log.e("WSHelper", "Parsing JSON failed", e)
@@ -84,6 +85,10 @@ class WSHelper() {
             }
         }
 
+        fun updateSensorStateByName(name: String, newState: Boolean) {
+            sensors.find { it.name == name }?.status?.value = newState
+        }
+
         fun closeConnection() {
             webSocket?.close(1000, "Closing Connection")
         }
@@ -97,7 +102,7 @@ class WSHelper() {
             //updateStatus(!(currentStatus.value))
 
             val request = Request.Builder()
-                .url("http://${BuildConfig.SERVER_IP}:5000/api/${deviceEndpoint}") // Adjust the URL/port as necessary INSIDE build.gradle
+                .url("http://192.168.50.60:5000/api/${deviceEndpoint}") // Adjust the URL/port as necessary
                 .post(jsonRequestBody)
                 .build()
 
