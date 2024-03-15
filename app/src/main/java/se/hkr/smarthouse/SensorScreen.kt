@@ -76,8 +76,9 @@ fun SensorIndicator(sensor: Sensor) {
         ) {
             Text(text = sensor.displayName, style = MaterialTheme.typography.bodyLarge)
             Text(
-                text = if (sensor.status.value) "ON" else "OFF",
-                color = if (sensor.status.value) Color.Blue else Color.Gray,
+                //text = if (sensor.status.value) "ON" else "OFF",
+                //color = if (sensor.status.value) Color.Blue else Color.Gray
+                text = sensor.status.value.toString(),
                 style = MaterialTheme.typography.bodyLarge
             )
         }

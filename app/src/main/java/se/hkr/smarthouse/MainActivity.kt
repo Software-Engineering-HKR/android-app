@@ -32,6 +32,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,6 +47,7 @@ import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.hkr.smarthouse.data.Device
+import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
 import se.hkr.smarthouse.ui.composables.Devices
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
@@ -64,6 +66,14 @@ class MainActivity : ComponentActivity() {
                 add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
                 add(Device(name = "window", endpoint = "window", displayName = "Window", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
             }
+            WSHelper.sensors.apply {
+                add(Sensor(name = "motion", displayName = "Motion Sensor", status = mutableStateOf(0)))
+                add(Sensor(name = "light", displayName = "Photocell Sensor", status = mutableStateOf(0)))
+                add(Sensor(name = "gas", displayName = "Gas Sensor", status = mutableStateOf(0)))
+                add(Sensor(name = "steam", displayName = "Steam Sensor", status = mutableStateOf(0)))
+                add(Sensor(name = "moisture", displayName = "Soil humidity Sensor", status = mutableStateOf(0)))
+            }
+
             WSHelper.initConnection("ws://${BuildConfig.SERVER_IP}:8080")
 
             val LCDText = remember { mutableStateOf("Your message here")}
