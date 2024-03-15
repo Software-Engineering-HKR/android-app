@@ -15,9 +15,11 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import org.json.JSONArray
 import org.json.JSONObject
 import se.hkr.smarthouse.BuildConfig
 import se.hkr.smarthouse.data.Device
+import se.hkr.smarthouse.data.Sensor
 import java.io.IOException
 
 /*class WSHelper() {
@@ -42,17 +44,19 @@ class WSHelper() {
         private val client = OkHttpClient()
         private var webSocket: WebSocket? = null
         val devices = mutableStateListOf<Device>()
+        val sensors = mutableStateListOf<Sensor>()
 
         fun initConnection(URL: String) {
             val request = Request.Builder().url(URL).build()
             webSocket = client.newWebSocket(request, object : WebSocketListener() {
 
-                override fun onMessage(webSocket: WebSocket, text: String) {
-                    Log.d("WSHelper", "WebSocket Message: $text")
+                override fun onMessage(webSocket: WebSocket, message: String) {
+                    Log.d("WSHelper", "WebSocket Message: $message")
                     try {
                         // json structure: {devices:[{}], sensors: [{}]}
-                        val json = JSONObject(text)
-                        val jsonDevicesArray = json.getJSONArray("devices")
+
+                        // *** devices ***
+                        val jsonDevicesArray = transformJsonObject(message, "devices")
                         var jsonDevices = JSONObject()
 
                         for (i in 0 until jsonDevicesArray.length()) {
@@ -60,8 +64,19 @@ class WSHelper() {
                             jsonDevices.put(deviceObject.getString("name"), deviceObject.getBoolean("status"))
                         }
 
+                        // *** sensors ***
+                        val jsonSensorsArray = transformJsonObject(message, "sensors")
+                        var jsonSensors = JSONObject()
+
+                        for (e in 0 until jsonSensorsArray.length()) {
+                            val sensorObject = jsonSensorsArray.getJSONObject(e)
+                            jsonSensors.put(sensorObject.getString("name"), sensorObject.getInt("value"))
+                        }
+
+                        // ***
                         runBlocking {
                             fetchDeviceStatusFromJSONObject(jsonDevices)
+                            fetchSensorStatusFromJSONObject(jsonSensors)
                         }
 
                     } catch (e: Exception) {
@@ -78,23 +93,32 @@ class WSHelper() {
         suspend fun fetchDeviceStatusFromJSONObject(json: JSONObject) {
             withContext(Dispatchers.Main) {
                 devices.forEach { device ->
-                    var newStatus = json.optBoolean(device.name, device.status.value)
-                    device.status.value = newStatus
+                    device.status.value = json.optBoolean(device.name, device.status.value)
                 }
             }
+        }
+
+        suspend fun fetchSensorStatusFromJSONObject(json: JSONObject) {
+            withContext(Dispatchers.Main) {
+                sensors.forEach { sensor ->
+                    sensor.status.value = json.optInt(sensor.name, sensor.status.value)
+                }
+            }
+        }
+
+        fun transformJsonObject(message: String, unit: String): JSONArray {
+            // json structure: {devices:[{}], sensors: [{}]}
+            return JSONObject(message).getJSONArray(unit)
         }
 
         fun closeConnection() {
             webSocket?.close(1000, "Closing Connection")
         }
 
-
         public fun toggleDevice(currentStatus: MutableState<Boolean>, deviceEndpoint: String) {
             val newStatus = if (currentStatus.value) "0" else "1"
             val json = "application/json; charset=utf-8".toMediaTypeOrNull()
             val jsonRequestBody = "{\"command\":\"$newStatus\"}".toRequestBody(json)
-
-            //updateStatus(!(currentStatus.value))
 
             val request = Request.Builder()
                 .url("http://${BuildConfig.SERVER_IP}:5000/api/${deviceEndpoint}") // Adjust the URL/port as necessary INSIDE build.gradle
@@ -116,5 +140,4 @@ class WSHelper() {
             })
         }
     }
-
 }

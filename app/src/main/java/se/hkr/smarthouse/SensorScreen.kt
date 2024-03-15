@@ -64,8 +64,8 @@ fun SensorIndicator(sensor: Sensor) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 0.4.dp), // Adds vertical spacing between cards
-        shape = MaterialTheme.shapes.medium // Provides rounded corners
+            .padding(vertical = 0.4.dp),
+        shape = MaterialTheme.shapes.medium
     ) {
         Row(
             modifier = Modifier
@@ -76,8 +76,9 @@ fun SensorIndicator(sensor: Sensor) {
         ) {
             Text(text = sensor.displayName, style = MaterialTheme.typography.bodyLarge)
             Text(
-                text = if (sensor.status.value) "ON" else "OFF",
-                color = if (sensor.status.value) Color.Blue else Color.Gray,
+                //text = if (sensor.status.value) "ON" else "OFF",
+                //color = if (sensor.status.value) Color.Blue else Color.Gray
+                text = sensor.status.value.toString(),
                 style = MaterialTheme.typography.bodyLarge
             )
         }
