@@ -22,23 +22,6 @@ import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.data.Sensor
 import java.io.IOException
 
-/*class WSHelper() {
-    private lateinit var listener: WSListener
-    private lateinit var ws: WebSocket
-
-    fun InitConnection(URL : String){
-        val client: OkHttpClient =  OkHttpClient()
-
-        val request: Request = Request
-            .Builder()
-            .url(URL)
-            .build()
-        listener = WSListener()
-        ws = client.newWebSocket(request, listener)
-    }
-}*/
-
-// TODO: refactor to work for all devices, waiting on backend.
 class WSHelper() {
     companion object {
         private val client = OkHttpClient()
@@ -53,8 +36,6 @@ class WSHelper() {
                 override fun onMessage(webSocket: WebSocket, message: String) {
                     Log.d("WSHelper", "WebSocket Message: $message")
                     try {
-                        // json structure: {devices:[{}], sensors: [{}]}
-
                         // *** devices ***
                         val jsonDevicesArray = transformJsonObject(message, "devices")
                         var jsonDevices = JSONObject()
