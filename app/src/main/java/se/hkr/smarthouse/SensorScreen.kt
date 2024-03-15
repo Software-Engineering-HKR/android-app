@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import se.hkr.smarthouse.data.Sensor
@@ -78,7 +77,7 @@ fun SensorIndicator(sensor: Sensor) {
             Text(
                 //text = if (sensor.status.value) "ON" else "OFF",
                 //color = if (sensor.status.value) Color.Blue else Color.Gray
-                text = sensor.status.value.toString(),
+                text = if (sensor.reading.value < sensor.threshold) sensor.low else sensor.high,
                 style = MaterialTheme.typography.bodyLarge
             )
         }

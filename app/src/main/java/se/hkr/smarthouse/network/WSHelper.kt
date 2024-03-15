@@ -82,7 +82,7 @@ class WSHelper() {
         suspend fun fetchSensorStatusFromJSONObject(json: JSONObject) {
             withContext(Dispatchers.Main) {
                 sensors.forEach { sensor ->
-                    sensor.status.value = json.optInt(sensor.name, sensor.status.value)
+                    sensor.reading.value = json.optInt(sensor.name, sensor.reading.value)
                 }
             }
         }
