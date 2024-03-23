@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
-import se.hkr.smarthouse.ui.composables.Devices
+import se.hkr.smarthouse.ui.composables.DevicesComposables
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
 
 class MainActivity : ComponentActivity() {
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
 
             WSHelper.initConnection("ws://${BuildConfig.SERVER_IP}:8080")
 
-            val LCDText = remember { mutableStateOf("Your message here")}
+            val LCDText = remember { mutableStateOf("")}
 
             SmartHouseTheme {
                         // A surface container using the 'background' color from the theme
@@ -76,10 +76,11 @@ class MainActivity : ComponentActivity() {
                             //ScaffoldExample()
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(15.dp),
                                 modifier = Modifier
                                     .verticalScroll(state = scrollState)
                                     .fillMaxSize()
-                                    .padding(16.dp)
+                                    .padding(horizontal = 16.dp, vertical = 16.dp)
                             ) {
                                 Text(
                                     "Welcome, user!",
@@ -88,15 +89,14 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.align(Alignment.Start)
                                 )
 
-                                val Composables = Devices()
+                                val Composables = DevicesComposables()
                                 Composables.TextInputCard(LCDText)
 
                                 WSHelper.devices.forEach { device ->
                                     DeviceCard(device = device)
                                 }
-
                                 SensorCard(
-                                    text = "Sensor",
+                                    text = "Sensors",
                                     navigateTo = SensorScreen::class.java
                                 )
                                 }
@@ -116,9 +116,8 @@ fun DeviceSwitch(device: Device) {
         modifier = Modifier.semantics { contentDescription = "Demo" },
         checked = device.status.value,
         onCheckedChange = { isChecked ->
-            // Assuming toggleDevice is now a static method in WSHelper
             WSHelper.toggleDevice(device.status, device.endpoint)
-            device.status.value = isChecked // Optimistically update the UI
+            device.status.value = isChecked
         })
 }
 
@@ -127,7 +126,7 @@ fun DeviceCard(device: Device) {
     ElevatedCard(
         Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(0.4.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -138,7 +137,7 @@ fun DeviceCard(device: Device) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(16.dp)
+                .padding(4.dp)
                 .fillMaxWidth()
         ) {
             Row(
@@ -147,8 +146,8 @@ fun DeviceCard(device: Device) {
             ) {
                 Column(
                     horizontalAlignment = Alignment.Start,
-                    //modifier = Modifier
-                        //.padding(16.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Icon(imageVector = Icons.Rounded.House, contentDescription = null)
                 }
@@ -156,7 +155,7 @@ fun DeviceCard(device: Device) {
                 Column(
                     horizontalAlignment = Alignment.Start,
                     modifier = Modifier
-                        .padding(16.dp),
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
                 ) {
                     Text(
                         text = device.displayName.uppercase(),
@@ -192,19 +191,19 @@ fun SensorCard(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 15.dp)
+            .padding(horizontal = 0.dp, vertical = 8.dp)
             .clickable {
                 context.startActivity(Intent(context, navigateTo))
             },
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(

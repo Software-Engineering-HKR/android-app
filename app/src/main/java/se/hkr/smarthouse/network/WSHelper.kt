@@ -98,8 +98,12 @@ class WSHelper() {
 
         public fun toggleDevice(currentStatus: MutableState<Boolean>, deviceEndpoint: String) {
             val newStatus = if (currentStatus.value) "0" else "1"
+            sendMessage(newStatus, deviceEndpoint, "command")
+        }
+
+        public fun sendMessage(currentMessage: String, deviceEndpoint: String, reqField: String) { // reqField: "message" for LCD, "command" for everything else
             val json = "application/json; charset=utf-8".toMediaTypeOrNull()
-            val jsonRequestBody = "{\"command\":\"$newStatus\"}".toRequestBody(json)
+            val jsonRequestBody = "{\"$reqField\":\"$currentMessage\"}".toRequestBody(json)
 
             val request = Request.Builder()
                 .url("http://${BuildConfig.SERVER_IP}:5000/api/${deviceEndpoint}") // Adjust the URL/port as necessary INSIDE build.gradle
@@ -108,14 +112,14 @@ class WSHelper() {
 
             client.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
-                    Log.d("toggleLed", "Failed to send command: $newStatus", e)
+                    Log.d("Server connection", "Failed to send \"$reqField\": $currentMessage", e)
                 }
 
                 override fun onResponse(call: Call, response: Response) {
                     if (!response.isSuccessful) {
-                        Log.e("toggleLed", "Server error: ${response.code}")
+                        Log.e("Server connection", "Server error: ${response.code}")
                     } else {
-                        Log.d("toggleLed", "Successfully toggled LED to $newStatus")
+                        Log.d("Server connection", "Successfully sent: $currentMessage")
                     }
                 }
             })
