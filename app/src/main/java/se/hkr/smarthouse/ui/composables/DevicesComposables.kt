@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -57,7 +59,7 @@ class DevicesComposables() {
             ) {
                 Column(
                 ) {
-                    OutlinedTextField(LCDText)
+                    LCDTextInputField(LCDText)
                     LCDButton(message = LCDText)
                 }
             }
@@ -66,7 +68,7 @@ class DevicesComposables() {
 }
 
 @Composable
-fun OutlinedTextField(text: MutableState<String>) {
+fun LCDTextInputField(text: MutableState<String>) {
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         modifier = Modifier
@@ -81,10 +83,13 @@ fun OutlinedTextField(text: MutableState<String>) {
 
 @Composable
 fun LCDButton(message: MutableState<String>) {
-    Button(onClick = { WSHelper.sendMessage(message.value, "LCD", "message") }, modifier = Modifier
-        .padding(top = 16.dp)
-        .fillMaxWidth()) {
-        Text("Set new message")
+    Button(colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
+            onClick = { WSHelper.sendMessage(message.value, "LCD", "message") },
+            modifier = Modifier
+            .padding(top = 16.dp)
+            .fillMaxWidth()
+    ) {
+            Text("Set new message".uppercase())
     }
 }
 
@@ -95,7 +100,12 @@ fun DeviceSwitch(device: Device) {
         onCheckedChange = { isChecked ->
             WSHelper.toggleDevice(device.status, device.endpoint)
             device.status.value = isChecked
-        })
+        }, colors = SwitchDefaults.colors(
+            checkedThumbColor = MaterialTheme.colorScheme.secondary,
+            checkedTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+            uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+            uncheckedTrackColor = MaterialTheme.colorScheme.primaryContainer,)
+    )
 }
 
 @Composable
@@ -105,8 +115,7 @@ fun DeviceCard(device: Device) {
             .fillMaxWidth()
             .padding(0.4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     ) {
 
@@ -143,7 +152,7 @@ fun DeviceCard(device: Device) {
                     )
                     Text(
                         text = (if (device.status.value) device.statusMaskTrue else device.statusMaskFalse).uppercase(),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.align(Alignment.Start),
                     )
                 }

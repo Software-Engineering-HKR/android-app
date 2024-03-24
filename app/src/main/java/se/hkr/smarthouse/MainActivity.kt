@@ -54,6 +54,7 @@ import se.hkr.smarthouse.ui.composables.DeviceCard
 import se.hkr.smarthouse.ui.composables.DevicesComposables
 import se.hkr.smarthouse.ui.composables.SensorCard
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
+import se.hkr.smarthouse.ui.theme.fontFamily
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +91,6 @@ class MainActivity : ComponentActivity() {
                                 .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() })},
                             color = MaterialTheme.colorScheme.background
                         ) {
-                            //ScaffoldExample()
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(15.dp),
@@ -100,7 +100,7 @@ class MainActivity : ComponentActivity() {
                                     .padding(horizontal = 16.dp, vertical = 16.dp)
                             ) {
                                 /*Text(
-                                    "Welcome, user!",
+                                    text = "Welcome, user!",
                                     style = MaterialTheme.typography.headlineMedium,
                                     color = Color.Black,
                                     modifier = Modifier

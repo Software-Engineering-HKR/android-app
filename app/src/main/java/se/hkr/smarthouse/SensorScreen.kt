@@ -23,12 +23,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
+import se.hkr.smarthouse.ui.theme.SmartHouseTheme
 
 class SensorScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            SensorScreenContent()
+            SmartHouseTheme {
+                SensorScreenContent()
+            }
         }
     }
 }
@@ -124,7 +127,7 @@ fun SensorIndicator(sensor: Sensor) {
                 ) {
                     Text(
                         text = sensor.displayName.uppercase(),
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.align(Alignment.Start),
                     )
 
@@ -138,7 +141,7 @@ fun SensorIndicator(sensor: Sensor) {
             ) {
                 Text(
                     text = if (sensor.reading.value < sensor.threshold) sensor.low.uppercase() else sensor.high.uppercase(),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.align(Alignment.Start),
                     maxLines = 1
                 )
