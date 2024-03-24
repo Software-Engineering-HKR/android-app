@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,7 +64,7 @@ fun DisplaySensors() {
 
 @Composable
 fun SensorIndicator(sensor: Sensor) {
-    Card(
+    /*Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 0.4.dp),
@@ -80,6 +84,65 @@ fun SensorIndicator(sensor: Sensor) {
                 text = if (sensor.reading.value < sensor.threshold) sensor.low else sensor.high,
                 style = MaterialTheme.typography.bodyLarge
             )
+        }
+    }*/
+
+    ElevatedCard(
+        Modifier
+            .fillMaxWidth()
+            .padding(0.4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        )
+    ) {
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier
+                        .padding(horizontal = 6.dp, vertical = 8.dp)
+                ) {
+                    Icon(imageVector = sensor.icon, contentDescription = null,
+                        modifier = Modifier
+                            .size(54.dp))
+                }
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = sensor.displayName.uppercase(),
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.align(Alignment.Start),
+                    )
+
+                }
+            }
+            Column(
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .widthIn(40.dp)
+                    .padding(end = 8.dp),
+            ) {
+                Text(
+                    text = if (sensor.reading.value < sensor.threshold) sensor.low.uppercase() else sensor.high.uppercase(),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.align(Alignment.Start),
+                    maxLines = 1
+                )
+            }
         }
     }
 }

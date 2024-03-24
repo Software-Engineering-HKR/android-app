@@ -4,17 +4,15 @@ package se.hkr.smarthouse.ui.composables
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.House
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -28,11 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -96,7 +91,6 @@ fun LCDButton(message: MutableState<String>) {
 @Composable
 fun DeviceSwitch(device: Device) {
     Switch(
-        modifier = Modifier.semantics { contentDescription = "Demo" },
         checked = device.status.value,
         onCheckedChange = { isChecked ->
             WSHelper.toggleDevice(device.status, device.endpoint)
@@ -130,15 +124,17 @@ fun DeviceCard(device: Device) {
                 Column(
                     horizontalAlignment = Alignment.Start,
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 6.dp, vertical = 8.dp)
                 ) {
-                    Icon(imageVector = Icons.Rounded.House, contentDescription = null)
+                    Icon(imageVector = device.icon, contentDescription = null,
+                        modifier = Modifier
+                            .size(54.dp))
                 }
 
                 Column(
                     horizontalAlignment = Alignment.Start,
                     modifier = Modifier
-                        .padding(horizontal = 8.dp, vertical = 8.dp)
+                        .padding(horizontal = 4.dp, vertical = 8.dp)
                 ) {
                     Text(
                         text = device.displayName.uppercase(),
@@ -155,8 +151,8 @@ fun DeviceCard(device: Device) {
 
             Column(
                 horizontalAlignment = Alignment.End,
-                //modifier = Modifier
-                //.padding(16.dp),
+                modifier = Modifier
+                .padding(end = 8.dp),
             ) {
                 DeviceSwitch(device)
             }

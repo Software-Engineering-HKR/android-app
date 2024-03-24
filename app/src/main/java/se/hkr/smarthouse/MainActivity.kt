@@ -16,6 +16,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Air
+import androidx.compose.material.icons.outlined.BrightnessMedium
+import androidx.compose.material.icons.outlined.Co2
+import androidx.compose.material.icons.outlined.DoorFront
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.RollerShades
+import androidx.compose.material.icons.outlined.Sensors
+import androidx.compose.material.icons.outlined.WaterDrop
+import androidx.compose.material.icons.outlined.WindPower
 import androidx.compose.material.icons.rounded.House
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -55,18 +64,18 @@ class MainActivity : ComponentActivity() {
             val focusManager = LocalFocusManager.current
 
             WSHelper.devices.apply {
-                add(Device(name = "led", endpoint = "led", displayName = "White Light", status = remember { mutableStateOf(false) }))
-                add(Device(name = "yellow-led", endpoint = "yellow-led", displayName = "Yellow Light", status = remember { mutableStateOf(false) }))
-                add(Device(name = "fan", endpoint = "fan", displayName = "Fan", status = remember { mutableStateOf(false) }))
-                add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
-                add(Device(name = "window", endpoint = "window", displayName = "Window", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed"))
+                add(Device(name = "led", endpoint = "led", displayName = "White Light", status = remember { mutableStateOf(false) }, icon = Icons.Outlined.Lightbulb))
+                add(Device(name = "yellow-led", endpoint = "yellow-led", displayName = "Yellow Light", status = remember { mutableStateOf(false) }, icon = Icons.Outlined.Lightbulb))
+                add(Device(name = "fan", endpoint = "fan", displayName = "Fan", status = remember { mutableStateOf(false) }, icon = Icons.Outlined.WindPower))
+                add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed", icon = Icons.Outlined.DoorFront))
+                add(Device(name = "window", endpoint = "window", displayName = "Window", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed", icon = Icons.Outlined.RollerShades))
             }
             WSHelper.sensors.apply {
-                add(Sensor(name = "motion", displayName = "Motion Sensor", reading = mutableStateOf(0)))
-                add(Sensor(name = "light", displayName = "Photocell Sensor", reading = mutableStateOf(0), threshold = 300))
-                add(Sensor(name = "gas", displayName = "Gas Sensor", reading = mutableStateOf(0), threshold = 100))
-                add(Sensor(name = "steam", displayName = "Steam Sensor", reading = mutableStateOf(0), threshold = 100))
-                add(Sensor(name = "moisture", displayName = "Soil humidity Sensor", reading = mutableStateOf(0), threshold = 100, low = "Dry", high = "Moist"))
+                add(Sensor(name = "motion", displayName = "Motion", reading = mutableStateOf(0), icon = Icons.Outlined.Sensors))
+                add(Sensor(name = "light", displayName = "Photocell", reading = mutableStateOf(0), threshold = 300, icon = Icons.Outlined.BrightnessMedium))
+                add(Sensor(name = "gas", displayName = "Gas", reading = mutableStateOf(0), threshold = 100, icon = Icons.Outlined.Co2))
+                add(Sensor(name = "steam", displayName = "Steam", reading = mutableStateOf(0), threshold = 100, icon = Icons.Outlined.Air))
+                add(Sensor(name = "moisture", displayName = "Soil humidity", reading = mutableStateOf(0), threshold = 100, low = "Dry", high = "Moist", icon = Icons.Outlined.WaterDrop))
             }
 
             WSHelper.initConnection("ws://${BuildConfig.SERVER_IP}:8080")
