@@ -15,7 +15,9 @@ import androidx.compose.material.icons.outlined.Air
 import androidx.compose.material.icons.outlined.BrightnessMedium
 import androidx.compose.material.icons.outlined.Co2
 import androidx.compose.material.icons.outlined.DoorFront
+import androidx.compose.material.icons.outlined.Doorbell
 import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.LockOpen
 import androidx.compose.material.icons.outlined.RollerShades
 import androidx.compose.material.icons.outlined.Sensors
 import androidx.compose.material.icons.outlined.WaterDrop
@@ -49,8 +51,10 @@ class MainActivity : ComponentActivity() {
                 add(Device(name = "fan", endpoint = "fan", displayName = "Fan", status = remember { mutableStateOf(false) }, icon = Icons.Outlined.WindPower))
                 add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed", icon = Icons.Outlined.DoorFront))
                 add(Device(name = "window", endpoint = "window", displayName = "Window", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed", icon = Icons.Outlined.RollerShades))
+                add(Device(name = "lock", endpoint = "lock", displayName = "Lock door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Locked", statusMaskFalse = "Unlocked", icon = Icons.Outlined.LockOpen))
             }
             WSHelper.sensors.apply {
+                add(Sensor(name = "doorbell", displayName = "Doorbell", reading = mutableStateOf(0), threshold = 1, icon = Icons.Outlined.Doorbell))
                 add(Sensor(name = "motion", displayName = "Motion", reading = mutableStateOf(0), icon = Icons.Outlined.Sensors))
                 add(Sensor(name = "light", displayName = "Photocell", reading = mutableStateOf(0), threshold = 300, icon = Icons.Outlined.BrightnessMedium))
                 add(Sensor(name = "gas", displayName = "Gas", reading = mutableStateOf(0), threshold = 100, icon = Icons.Outlined.Co2))
@@ -86,7 +90,6 @@ class MainActivity : ComponentActivity() {
                                         .align(Alignment.Start)
                                         .padding(horizontal = 16.dp)
                                 )*/
-                                //Text(text = WSHelper.LCDmessages[0])
     
                                 val mainScreenComposables = DevicesComposables()
                                 mainScreenComposables.TextInputCard(LCDText, WSHelper.LCDmessages)

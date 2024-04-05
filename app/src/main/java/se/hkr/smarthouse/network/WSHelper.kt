@@ -95,7 +95,9 @@ class WSHelper() {
         suspend fun fetchLCDMessagesFromJSONObject(json: JSONArray) {
             withContext(Dispatchers.Main) {
                 for(i in 0 until json.length()){
-                    LCDmessages.apply{ add(json[i].toString()) }
+                    if (json[i].toString() !in LCDmessages) {
+                        LCDmessages.apply { add(json[i].toString()) }
+                    }
                 }
             }
         }

@@ -40,7 +40,7 @@ class SensorScreen : ComponentActivity() {
 fun SensorScreenContent() {
     Column(
         modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(30.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         BackButton()
         Column(

@@ -27,7 +27,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -68,8 +67,19 @@ class DevicesComposables() {
             ) {
                 Column(
                 ) {
-                    LCDmessagesDropdown(LCDmessages)
+                    LCDMessagesDropdown(LCDmessages, LCDText)
                     LCDTextInputField(LCDText)
+                    if (!LCDmessages.isEmpty()){
+                        Text(
+                            text = "Current message: ${LCDmessages[0]}",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.CenterHorizontally)
+                                .padding(vertical = 4.dp)
+                        )
+                    }
                     LCDButton(message = LCDText)
                 }
             }
@@ -77,7 +87,7 @@ class DevicesComposables() {
     }
 
     @Composable
-    fun LCDmessagesDropdown(LCDmessages: SnapshotStateList<String>){
+    fun LCDMessagesDropdown(LCDmessages: SnapshotStateList<String>, LCDText: MutableState<String>){
         var expanded by remember { mutableStateOf(false) }
         var selectedOptionText by remember { mutableStateOf("Previous messages") }
 
@@ -87,18 +97,21 @@ class DevicesComposables() {
                 expanded = !expanded
             }
         ) {
-            TextField(
+            OutlinedTextField(
                 readOnly = true,
                 value = selectedOptionText,
                 onValueChange = { },
-                label = { Text("Label") },
+                //label = { Text("Label") },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(
                         expanded = expanded
                     )
                 },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier.menuAnchor()
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+                    .padding(bottom = 2.dp)
 
             )
             ExposedDropdownMenu(
@@ -112,6 +125,7 @@ class DevicesComposables() {
                         text = { Text(text = selectionOption) },
                         onClick = {
                             selectedOptionText = selectionOption
+                            LCDText.value = selectionOption
                             expanded = false
                         }
                     )
@@ -140,7 +154,7 @@ class DevicesComposables() {
         Button(colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
                 onClick = { WSHelper.sendMessage(message.value, "LCD", "message") },
                 modifier = Modifier
-                .padding(top = 16.dp)
+                .padding(top = 4.dp)
                 .fillMaxWidth()
         ) {
                 Text("Set new message".uppercase())
