@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -71,7 +72,7 @@ class DevicesComposables() {
                     LCDTextInputField(LCDText)
                     if (!LCDmessages.isEmpty()){
                         Text(
-                            text = "Current message: ${LCDmessages[LCDmessages.size-1]}",
+                            text = "Current message: ${LCDmessages[LCDmessages.size-1]}", // TODO : display last message even if it didn't get added to LCDmessages
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier
@@ -80,7 +81,7 @@ class DevicesComposables() {
                                 .padding(vertical = 4.dp)
                         )
                     }
-                    LCDButton(message = LCDText)
+                    LCDButton(message = LCDText, focusManager = LocalFocusManager.current)
                 }
             }
         }
@@ -150,9 +151,11 @@ class DevicesComposables() {
     }
 
     @Composable
-    fun LCDButton(message: MutableState<String>) {
+    fun LCDButton(message: MutableState<String>, focusManager: FocusManager) {
         Button(colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
-                onClick = { WSHelper.sendMessage(message.value, "LCD", "message") },
+                onClick = { WSHelper.sendMessage(message.value, "LCD", "message")
+                            focusManager.clearFocus()
+                          },
                 modifier = Modifier
                 .padding(top = 4.dp)
                 .fillMaxWidth()
