@@ -71,7 +71,7 @@ class DevicesComposables() {
                     LCDTextInputField(LCDText)
                     if (!LCDmessages.isEmpty()){
                         Text(
-                            text = "Current message: ${LCDmessages[0]}",
+                            text = "Current message: ${LCDmessages[LCDmessages.size-1]}",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier
