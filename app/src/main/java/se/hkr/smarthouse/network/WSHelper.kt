@@ -28,6 +28,7 @@ class WSHelper() {
         private var webSocket: WebSocket? = null
         val devices = mutableStateListOf<Device>()
         val sensors = mutableStateListOf<Sensor>()
+        val LCDmessages = mutableStateListOf<String>()
 
         fun initConnection(URL: String) {
             val request = Request.Builder().url(URL).build()
@@ -37,7 +38,7 @@ class WSHelper() {
                     Log.d("WSHelper", "WebSocket Message: $message")
                     try {
                         // *** devices ***
-                        val jsonDevicesArray = transformJsonObject(message, "devices")
+                        val jsonDevicesArray = extractJsonArrayFromMsg(message, "devices")
                         var jsonDevices = JSONObject()
 
                         for (i in 0 until jsonDevicesArray.length()) {
@@ -46,18 +47,22 @@ class WSHelper() {
                         }
 
                         // *** sensors ***
-                        val jsonSensorsArray = transformJsonObject(message, "sensors")
+                        val jsonSensorsArray = extractJsonArrayFromMsg(message, "sensors")
                         var jsonSensors = JSONObject()
 
-                        for (e in 0 until jsonSensorsArray.length()) {
-                            val sensorObject = jsonSensorsArray.getJSONObject(e)
+                        for (i in 0 until jsonSensorsArray.length()) {
+                            val sensorObject = jsonSensorsArray.getJSONObject(i)
                             jsonSensors.put(sensorObject.getString("name"), sensorObject.getInt("value"))
                         }
+
+                        // *** LCD message ***
+                        val jsonLCDmessagesArray = JSONObject(message).getJSONObject("lcd").getJSONArray("messages")
 
                         // ***
                         runBlocking {
                             fetchDeviceStatusFromJSONObject(jsonDevices)
                             fetchSensorStatusFromJSONObject(jsonSensors)
+                            fetchLCDMessagesFromJSONObject(jsonLCDmessagesArray)
                         }
 
                     } catch (e: Exception) {
@@ -87,8 +92,17 @@ class WSHelper() {
             }
         }
 
-        fun transformJsonObject(message: String, unit: String): JSONArray {
-            // json structure: {devices:[{}], sensors: [{}]}
+        suspend fun fetchLCDMessagesFromJSONObject(json: JSONArray) {
+            withContext(Dispatchers.Main) {
+                for(i in 0 until json.length()){
+                    LCDmessages.apply{ add(json[i].toString()) }
+                }
+            }
+        }
+
+        // this function is used to extract separate json objects per unit from the json sent by the server which contains everything from the db
+        // json structure: {devices: [{}], sensors: [{}], lcd: []}
+        fun extractJsonArrayFromMsg(message: String, unit: String): JSONArray {
             return JSONObject(message).getJSONArray(unit)
         }
 

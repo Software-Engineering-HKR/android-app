@@ -1,17 +1,12 @@
 package se.hkr.smarthouse
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,36 +20,20 @@ import androidx.compose.material.icons.outlined.RollerShades
 import androidx.compose.material.icons.outlined.Sensors
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material.icons.outlined.WindPower
-import androidx.compose.material.icons.rounded.House
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
-import se.hkr.smarthouse.ui.composables.DeviceCard
 import se.hkr.smarthouse.ui.composables.DevicesComposables
-import se.hkr.smarthouse.ui.composables.SensorCard
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
-import se.hkr.smarthouse.ui.theme.fontFamily
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +67,7 @@ class MainActivity : ComponentActivity() {
                         Surface(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() })},
+                                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) },
                             color = MaterialTheme.colorScheme.background
                         ) {
                             Column(
@@ -107,14 +86,15 @@ class MainActivity : ComponentActivity() {
                                         .align(Alignment.Start)
                                         .padding(horizontal = 16.dp)
                                 )*/
-
-                                val Composables = DevicesComposables()
-                                Composables.TextInputCard(LCDText)
+                                //Text(text = WSHelper.LCDmessages[0])
+    
+                                val mainScreenComposables = DevicesComposables()
+                                mainScreenComposables.TextInputCard(LCDText, WSHelper.LCDmessages)
 
                                 WSHelper.devices.forEach { device ->
-                                    DeviceCard(device = device)
+                                    mainScreenComposables.DeviceCard(device = device)
                                 }
-                                SensorCard(
+                                mainScreenComposables.SensorCard(
                                     text = "Sensors",
                                     navigateTo = SensorScreen::class.java
                                 )
@@ -122,7 +102,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-    }
+                }
     override fun onDestroy() {
         super.onDestroy()
         WSHelper.closeConnection()
