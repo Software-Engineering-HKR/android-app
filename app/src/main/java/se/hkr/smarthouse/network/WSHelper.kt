@@ -3,6 +3,7 @@ package se.hkr.smarthouse.network
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -30,6 +31,7 @@ class WSHelper() {
         val devices = mutableStateListOf<Device>()
         val sensors = mutableStateListOf<Sensor>()
         val LCDmessages = mutableStateListOf<String>()
+        val username = mutableStateOf<String>("")
 
         fun initConnection(URL: String) {
             val request = Request.Builder().url(URL).build()
@@ -145,7 +147,7 @@ class WSHelper() {
         fun authenticate(username: String, password: String, isRegistration: Boolean, onLoginSuccess: () -> Unit) {
             val json = "application/json; charset=utf-8".toMediaTypeOrNull()
             val jsonRequestBody = "{\"username\":\"$username\", \"password\":\"$password\"}".toRequestBody(json)
-
+            this.username.value = username
             val endpoint = if(isRegistration) {
                 "register"
             } else {

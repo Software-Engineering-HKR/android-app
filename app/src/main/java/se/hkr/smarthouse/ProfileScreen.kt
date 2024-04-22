@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
+import se.hkr.smarthouse.network.WSHelper
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
 import se.hkr.smarthouse.view.bottombar.BottomNavItem
 import se.hkr.smarthouse.view.bottombar.BottomNavigation
@@ -48,8 +49,7 @@ fun ProfileScreenContent(navController: NavHostController, context: Context){
                                 .padding(start = 25.dp, top = 60.dp, end = 25.dp, bottom = 0.dp )
                         ) {
                             ProfileCard(
-                                userName = "User 1 ",
-                                userEmail = "user1@example.com"
+                                userName = WSHelper.username.value
                             )
                             // Settings and logout
                             SettingsMenuComponent {
@@ -69,35 +69,29 @@ fun ProfileScreenContent(navController: NavHostController, context: Context){
                 }
 
 @Composable
-fun ProfileCard(
-    userName: String,
-    userEmail: String
-) {
+fun ProfileCard(userName: String) {
     Text(
         text = "Profile",
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
-        modifier = Modifier.padding(bottom = 30.dp) // Added bottom padding
+        modifier = Modifier.padding(bottom = 30.dp)
     )
     Spacer(modifier = Modifier.height(80.dp))
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp),
+            .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
             modifier = Modifier.padding(30.dp),
-            verticalArrangement = Arrangement.spacedBy(11.dp) // Increased spacing
+            verticalArrangement = Arrangement.spacedBy(11.dp)
         ) {
 
             Text(
                 text = "Name: $userName",
-                modifier = Modifier.padding(bottom = 20.dp) // Added bottom padding
-            )
-            Text(
-                text = "Email: $userEmail",
-                modifier = Modifier.padding(bottom = 16.dp) // Added bottom padding
+                modifier = Modifier.padding(bottom = 20.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                //color = MaterialTheme.colorScheme.secondary,
             )
         }
     }
