@@ -1,15 +1,17 @@
 package se.hkr.smarthouse
 
-import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -21,32 +23,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
-import se.hkr.smarthouse.ui.theme.SmartHouseTheme
-
-class SensorScreen : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            SmartHouseTheme {
-                SensorScreenContent()
-            }
-        }
-    }
-}
 
 @Composable
-fun SensorScreenContent() {
+fun SensorScreenContent(navController: NavHostController, scrollState: ScrollState) {
     Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier
+            .verticalScroll(state = scrollState)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween // Ensures bottom navigation is at the bottom
     ) {
-        BackButton()
         Column(
-            verticalArrangement = Arrangement.spacedBy(15.dp)
-        ){ DisplaySensors()}
+            modifier = Modifier.fillMaxHeight(0.9f),
+            // Ensure room for the navigation bar
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp) ,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                //BackButton()
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(15.dp)
+                ){ DisplaySensors()}
 
+            }
+        }
     }
 }
 
