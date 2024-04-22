@@ -142,10 +142,9 @@ class WSHelper() {
             })
         }
 
-        fun authenticate(username: String, password: String, isRegistration: Boolean) {
+        fun authenticate(username: String, password: String, isRegistration: Boolean, onLoginSuccess: () -> Unit) {
             val json = "application/json; charset=utf-8".toMediaTypeOrNull()
-            val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(10))
-            val jsonRequestBody = "{\"username\":\"$username\", \"password\":\"$hashedPassword\"}".toRequestBody(json)
+            val jsonRequestBody = "{\"username\":\"$username\", \"password\":\"$password\"}".toRequestBody(json)
 
             val endpoint = if(isRegistration) {
                 "register"
@@ -167,7 +166,8 @@ class WSHelper() {
                     if (!response.isSuccessful) {
                         Log.e("Server connection", "Server error: ${response.code}")
                     } else {
-                        Log.d("Server connection", "Successfully sent") //TODO: Redirect to MainActivity
+                        Log.d("Server connection", "Successfully sent")
+                        onLoginSuccess()
                     }
                 }
         })

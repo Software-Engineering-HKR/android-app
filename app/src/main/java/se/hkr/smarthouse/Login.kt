@@ -75,8 +75,7 @@ fun LoginScreenContent(onLoginSuccess: () -> Unit) {
 
         Button(
             onClick = {
-                WSHelper.authenticate(username, password, isRegistration = false) //TODO: display error message on invalid credentials
-                onLoginSuccess()
+                WSHelper.authenticate(username, password, isRegistration = false, onLoginSuccess) //TODO: display error message on invalid credentials
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -85,8 +84,7 @@ fun LoginScreenContent(onLoginSuccess: () -> Unit) {
 
         Button(
             onClick = {
-                WSHelper.authenticate(username, password, isRegistration = true) //TODO: display error message on invalid credentials
-                onLoginSuccess()
+                WSHelper.authenticate(username, password, isRegistration = true, onLoginSuccess) //TODO: display error message on invalid credentials
             },
             modifier = Modifier.fillMaxWidth()
         ) {
