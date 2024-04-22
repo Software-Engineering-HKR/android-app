@@ -78,4 +78,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.mindrot/jbcrypt
     implementation("org.mindrot:jbcrypt:0.4")
+
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
 }

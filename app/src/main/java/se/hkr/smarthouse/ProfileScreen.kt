@@ -1,5 +1,7 @@
 package se.hkr.smarthouse
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,18 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
+import androidx.navigation.NavHostController
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
 import se.hkr.smarthouse.view.bottombar.BottomNavItem
 import se.hkr.smarthouse.view.bottombar.BottomNavigation
 
-class Profile : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-            setContent {
-                SmartHouseTheme {
-                    val currentNavItem = remember { mutableStateOf(BottomNavItem.PROFILE) }
-
+@Composable
+fun ProfileScreenContent(navController: NavHostController, context: Context){
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.SpaceBetween,
@@ -56,34 +53,20 @@ class Profile : ComponentActivity() {
                             )
                             // Settings and logout
                             SettingsMenuComponent {
-                                // Logout action
-                                val intent = Intent(this@Profile, LoginActivity::class.java)
-                                intent.addFlags(
-                                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                                            Intent.FLAG_ACTIVITY_NEW_TASK or
-                                            Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                )
-                                startActivity(intent)
-                                finish()
+                                val intent = Intent(context, LoginActivity::class.java).apply {
+                                    addFlags(
+                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                                Intent.FLAG_ACTIVITY_NEW_TASK or
+                                                Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    )
+                                }
+                                context.startActivity(intent)
+                                // Assuming this composable is called from an Activity, you might want to finish it as well
+                                (context as? Activity)?.finish()
                             }
                         }
-
-
-
-                        BottomNavigation(
-                            currentNavItem = currentNavItem,
-                            onNavItemClick = { item ->
-                                when (item.route) {
-                                    "home" -> startActivity(Intent(this@Profile, MainActivity::class.java))
-                                    "sensors" -> startActivity(Intent(this@Profile, SensorScreen::class.java))
-                                }
-                            }
-                        )
                     }
                 }
-            }
-        }
-    }
 
 @Composable
 fun ProfileCard(

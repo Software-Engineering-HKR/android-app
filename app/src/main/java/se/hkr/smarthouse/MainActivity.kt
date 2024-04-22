@@ -1,5 +1,6 @@
 package se.hkr.smarthouse
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,7 +25,9 @@ import androidx.compose.material.icons.outlined.RollerShades
 import androidx.compose.material.icons.outlined.Sensors
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material.icons.outlined.WindPower
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,15 +36,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
 import se.hkr.smarthouse.ui.composables.DevicesComposables
+import se.hkr.smarthouse.ui.composables.DevicesScreen
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
 import se.hkr.smarthouse.view.bottombar.BottomNavItem
 import se.hkr.smarthouse.view.bottombar.BottomNavigation
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,94 +59,166 @@ class MainActivity : ComponentActivity() {
             val focusManager = LocalFocusManager.current
 
             WSHelper.devices.apply {
-                add(Device(name = "led", endpoint = "led", displayName = "White Light", status = remember { mutableStateOf(false) }, icon = Icons.Outlined.Lightbulb))
-                add(Device(name = "yellow-led", endpoint = "yellow-led", displayName = "Yellow Light", status = remember { mutableStateOf(false) }, icon = Icons.Outlined.Lightbulb))
-                add(Device(name = "fan", endpoint = "fan", displayName = "Fan", status = remember { mutableStateOf(false) }, icon = Icons.Outlined.WindPower))
-                add(Device(name = "door", endpoint = "door", displayName = "Door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed", icon = Icons.Outlined.DoorFront))
-                add(Device(name = "window", endpoint = "window", displayName = "Window", status = remember { mutableStateOf(false) }, statusMaskTrue = "Open", statusMaskFalse = "Closed", icon = Icons.Outlined.RollerShades))
-                add(Device(name = "lock", endpoint = "lock", displayName = "Lock door", status = remember { mutableStateOf(false) }, statusMaskTrue = "Locked", statusMaskFalse = "Unlocked", icon = Icons.Outlined.LockOpen))
+                add(
+                    Device(
+                        name = "led",
+                        endpoint = "led",
+                        displayName = "White Light",
+                        status = remember { mutableStateOf(false) },
+                        icon = Icons.Outlined.Lightbulb
+                    )
+                )
+                add(
+                    Device(
+                        name = "yellow-led",
+                        endpoint = "yellow-led",
+                        displayName = "Yellow Light",
+                        status = remember { mutableStateOf(false) },
+                        icon = Icons.Outlined.Lightbulb
+                    )
+                )
+                add(
+                    Device(
+                        name = "fan",
+                        endpoint = "fan",
+                        displayName = "Fan",
+                        status = remember { mutableStateOf(false) },
+                        icon = Icons.Outlined.WindPower
+                    )
+                )
+                add(
+                    Device(
+                        name = "door",
+                        endpoint = "door",
+                        displayName = "Door",
+                        status = remember { mutableStateOf(false) },
+                        statusMaskTrue = "Open",
+                        statusMaskFalse = "Closed",
+                        icon = Icons.Outlined.DoorFront
+                    )
+                )
+                add(
+                    Device(
+                        name = "window",
+                        endpoint = "window",
+                        displayName = "Window",
+                        status = remember { mutableStateOf(false) },
+                        statusMaskTrue = "Open",
+                        statusMaskFalse = "Closed",
+                        icon = Icons.Outlined.RollerShades
+                    )
+                )
+                add(
+                    Device(
+                        name = "lock",
+                        endpoint = "lock",
+                        displayName = "Lock door",
+                        status = remember { mutableStateOf(false) },
+                        statusMaskTrue = "Locked",
+                        statusMaskFalse = "Unlocked",
+                        icon = Icons.Outlined.LockOpen
+                    )
+                )
             }
             WSHelper.sensors.apply {
-                add(Sensor(name = "doorbell", displayName = "Doorbell", reading = mutableStateOf(0), threshold = 1, icon = Icons.Outlined.Doorbell))
-                add(Sensor(name = "motion", displayName = "Motion", reading = mutableStateOf(0), icon = Icons.Outlined.Sensors))
-                add(Sensor(name = "light", displayName = "Photocell", reading = mutableStateOf(0), threshold = 300, icon = Icons.Outlined.BrightnessMedium))
-                add(Sensor(name = "gas", displayName = "Gas", reading = mutableStateOf(0), threshold = 100, icon = Icons.Outlined.Co2))
-                add(Sensor(name = "steam", displayName = "Steam", reading = mutableStateOf(0), threshold = 100, icon = Icons.Outlined.Air))
-                add(Sensor(name = "moisture", displayName = "Soil humidity", reading = mutableStateOf(0), threshold = 100, low = "Dry", high = "Moist", icon = Icons.Outlined.WaterDrop))
+                add(
+                    Sensor(
+                        name = "doorbell",
+                        displayName = "Doorbell",
+                        reading = mutableStateOf(0),
+                        threshold = 1,
+                        icon = Icons.Outlined.Doorbell
+                    )
+                )
+                add(
+                    Sensor(
+                        name = "motion",
+                        displayName = "Motion",
+                        reading = mutableStateOf(0),
+                        icon = Icons.Outlined.Sensors
+                    )
+                )
+                add(
+                    Sensor(
+                        name = "light",
+                        displayName = "Photocell",
+                        reading = mutableStateOf(0),
+                        threshold = 300,
+                        icon = Icons.Outlined.BrightnessMedium
+                    )
+                )
+                add(
+                    Sensor(
+                        name = "gas",
+                        displayName = "Gas",
+                        reading = mutableStateOf(0),
+                        threshold = 100,
+                        icon = Icons.Outlined.Co2
+                    )
+                )
+                add(
+                    Sensor(
+                        name = "steam",
+                        displayName = "Steam",
+                        reading = mutableStateOf(0),
+                        threshold = 100,
+                        icon = Icons.Outlined.Air
+                    )
+                )
+                add(
+                    Sensor(
+                        name = "moisture",
+                        displayName = "Soil humidity",
+                        reading = mutableStateOf(0),
+                        threshold = 100,
+                        low = "Dry",
+                        high = "Moist",
+                        icon = Icons.Outlined.WaterDrop
+                    )
+                )
             }
 
             WSHelper.initConnection("ws://${BuildConfig.SERVER_IP}:8080")
 
-            val LCDText = remember { mutableStateOf("")}
+            val LCDText = remember { mutableStateOf("") }
 
             SmartHouseTheme {
-                val currentNavItem = remember { mutableStateOf(BottomNavItem.HOME) }
+                val navController = rememberNavController()
 
-                Column(
+
+                Surface(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.SpaceBetween // Keeps the bottom navigation at the bottom
+                    color = MaterialTheme.colorScheme.background
                 ) {
-                    // Main content of the activity
-                    Column(
-                        modifier = Modifier.fillMaxHeight(0.9f), // Leave room for the navigation bar
-                        verticalArrangement = Arrangement.spacedBy(15.dp),
+                    Scaffold(
+                        bottomBar = {
+                            BottomNavigation(
+                                navController
+                            )
+                        }) {
 
-                        ) {
-                        // A surface container using the 'background' color from the theme
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .pointerInput(Unit) { detectTapGestures(onTap = { focusManager.clearFocus() }) },
-                            color = MaterialTheme.colorScheme.background
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(15.dp),
-                                modifier = Modifier
-                                    .verticalScroll(state = scrollState)
-                                    .fillMaxSize()
-                                    .padding(horizontal = 16.dp, vertical = 16.dp)
-                            ) {
-                                /*Text(
-                                    text = "Welcome, user!",
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    color = Color.Black,
-                                    modifier = Modifier
-                                        .align(Alignment.Start)
-                                        .padding(horizontal = 16.dp)
-                                )*/
-    
-                                val mainScreenComposables = DevicesComposables()
-                                mainScreenComposables.TextInputCard(LCDText, WSHelper.LCDmessages)
-
-                                WSHelper.devices.forEach { device ->
-                                    mainScreenComposables.DeviceCard(device = device)
-                                }
-                                mainScreenComposables.SensorCard(
-                                    text = "Sensors",
-                                    navigateTo = SensorScreen::class.java
-                                )
+                        NavHost(navController = navController, startDestination = "Devices") {
+                            composable("Devices") {
+                                DevicesScreen(navController, focusManager, scrollState, LCDText)
+                            }
+                            composable("Sensors") {
+                                SensorScreenContent(navController, scrollState)
+                            }
+                            composable("Profile") {
+                                ProfileScreenContent(navController, context = this@MainActivity)
                             }
                         }
                     }
-                    // Bottom navigation bar
-                    BottomNavigation(
-                        currentNavItem = currentNavItem,
-                        onNavItemClick = { item ->
-                            currentNavItem.value = item
-                            when (item.route) {
-                                "sensors" -> startActivity(Intent(this@MainActivity, SensorScreen::class.java))
-                                "profile" -> startActivity(Intent(this@MainActivity, Profile::class.java))
-                            }
-                        }
-                    )
                 }
             }
         }
     }
-            override fun onDestroy() {
-                super.onDestroy()
-                WSHelper.closeConnection()
-            }
-        }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        WSHelper.closeConnection()
+        WSHelper.devices.clear()
+        WSHelper.sensors.clear()
+    }
+}
 
