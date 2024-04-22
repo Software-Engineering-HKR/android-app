@@ -75,4 +75,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.3.1")
     implementation("com.squareup.okhttp3:okhttp:4.2.1")
     implementation ("androidx.compose.ui:ui-text-google-fonts:1.6.1")
+
+    // https://mvnrepository.com/artifact/org.mindrot/jbcrypt
+    implementation("org.mindrot:jbcrypt:0.4")
 }

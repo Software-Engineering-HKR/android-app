@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import se.hkr.smarthouse.network.WSHelper
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
 
 class LoginActivity : ComponentActivity() {
@@ -33,6 +34,9 @@ class LoginActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreenContent(onLoginSuccess: () -> Unit) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,8 +49,8 @@ fun LoginScreenContent(onLoginSuccess: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = "",
-            onValueChange = { /* handle text input */ },
+            value = username,
+            onValueChange = { username = it },
             label = { Text("Email") },
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Next
@@ -57,8 +61,8 @@ fun LoginScreenContent(onLoginSuccess: () -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = "",
-            onValueChange = { /* handle text input */ },
+            value = password,
+            onValueChange = { password = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -71,11 +75,23 @@ fun LoginScreenContent(onLoginSuccess: () -> Unit) {
 
         Button(
             onClick = {
+                WSHelper.authenticate(username, password, isRegistration = false) //TODO: display error message on invalid credentials
                 onLoginSuccess()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Login")
         }
+
+        Button(
+            onClick = {
+                WSHelper.authenticate(username, password, isRegistration = true) //TODO: display error message on invalid credentials
+                onLoginSuccess()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Register")
+        }
     }
 }
+

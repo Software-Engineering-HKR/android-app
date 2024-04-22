@@ -17,6 +17,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.json.JSONArray
 import org.json.JSONObject
+import org.mindrot.jbcrypt.BCrypt
 import se.hkr.smarthouse.BuildConfig
 import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.data.Sensor
@@ -117,7 +118,7 @@ class WSHelper() {
             sendMessage(newStatus, deviceEndpoint, "command")
         }
 
-        public fun sendMessage(currentMessage: String, deviceEndpoint: String, reqField: String) { // reqField: "message" for LCD, "command" for everything else
+        fun sendMessage(currentMessage: String, deviceEndpoint: String, reqField: String) { // reqField: "message" for LCD, "command" for everything else
             val json = "application/json; charset=utf-8".toMediaTypeOrNull()
             val jsonRequestBody = "{\"$reqField\":\"$currentMessage\"}".toRequestBody(json)
 
@@ -140,5 +141,36 @@ class WSHelper() {
                 }
             })
         }
+
+        fun authenticate(username: String, password: String, isRegistration: Boolean) {
+            val json = "application/json; charset=utf-8".toMediaTypeOrNull()
+            val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(10))
+            val jsonRequestBody = "{\"username\":\"$username\", \"password\":\"$hashedPassword\"}".toRequestBody(json)
+
+            val endpoint = if(isRegistration) {
+                "register"
+            } else {
+                "login"
+            }
+
+            val request = Request.Builder()
+                .url("http://${BuildConfig.SERVER_IP}:5000/${endpoint}") // Adjust the URL/port as necessary INSIDE build.gradle
+                .post(jsonRequestBody)
+                .build()
+
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.d("Server connection", "Failed to send")
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (!response.isSuccessful) {
+                        Log.e("Server connection", "Server error: ${response.code}")
+                    } else {
+                        Log.d("Server connection", "Successfully sent") //TODO: Redirect to MainActivity
+                    }
+                }
+        })
     }
+}
 }
