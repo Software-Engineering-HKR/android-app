@@ -1,15 +1,20 @@
 package se.hkr.smarthouse
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -17,6 +22,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,13 +31,39 @@ import androidx.compose.ui.unit.dp
 import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
+import se.hkr.smarthouse.view.bottombar.BottomNavItem
+import se.hkr.smarthouse.view.bottombar.BottomNavigation
 
 class SensorScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SmartHouseTheme {
-                SensorScreenContent()
+                val currentNavItem = remember { mutableStateOf(BottomNavItem.SENSORS) }
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceBetween // Ensures bottom navigation is at the bottom
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxHeight(0.9f),
+                        // Ensure room for the navigation bar
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        SensorScreenContent() // Existing content
+                    }
+
+                    BottomNavigation(
+                        currentNavItem = currentNavItem,
+                        onNavItemClick = { item ->
+                            currentNavItem.value = item
+                            when (item.route) {
+                                "home" -> startActivity(Intent(this@SensorScreen, MainActivity::class.java))
+                                "profile" -> startActivity(Intent(this@SensorScreen, Profile::class.java))
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -39,8 +72,9 @@ class SensorScreen : ComponentActivity() {
 @Composable
 fun SensorScreenContent() {
     Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier
+            .padding(16.dp) ,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         BackButton()
         Column(
