@@ -1,11 +1,13 @@
 package se.hkr.smarthouse
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -36,6 +38,8 @@ import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
 import se.hkr.smarthouse.ui.composables.DevicesComposables
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
+import se.hkr.smarthouse.view.bottombar.BottomNavItem
+import se.hkr.smarthouse.view.bottombar.BottomNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,6 +71,18 @@ class MainActivity : ComponentActivity() {
             val LCDText = remember { mutableStateOf("")}
 
             SmartHouseTheme {
+                val currentNavItem = remember { mutableStateOf(BottomNavItem.HOME) }
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceBetween // Keeps the bottom navigation at the bottom
+                ) {
+                    // Main content of the activity
+                    Column(
+                        modifier = Modifier.fillMaxHeight(0.9f), // Leave room for the navigation bar
+                        verticalArrangement = Arrangement.spacedBy(15.dp),
+
+                        ) {
                         // A surface container using the 'background' color from the theme
                         Surface(
                             modifier = Modifier
@@ -101,14 +117,27 @@ class MainActivity : ComponentActivity() {
                                     text = "Sensors",
                                     navigateTo = SensorScreen::class.java
                                 )
-                                }
                             }
                         }
                     }
+                    // Bottom navigation bar
+                    BottomNavigation(
+                        currentNavItem = currentNavItem,
+                        onNavItemClick = { item ->
+                            currentNavItem.value = item
+                            when (item.route) {
+                                "sensors" -> startActivity(Intent(this@MainActivity, SensorScreen::class.java))
+                                "profile" -> startActivity(Intent(this@MainActivity, Profile::class.java))
+                            }
+                        }
+                    )
                 }
-    override fun onDestroy() {
-        super.onDestroy()
-        WSHelper.closeConnection()
+            }
+        }
     }
-}
+            override fun onDestroy() {
+                super.onDestroy()
+                WSHelper.closeConnection()
+            }
+        }
 
