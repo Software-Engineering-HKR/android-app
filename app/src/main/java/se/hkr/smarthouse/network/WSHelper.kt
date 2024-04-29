@@ -31,6 +31,7 @@ class WSHelper() {
         val sensors = mutableStateListOf<Sensor>()
         val LCDmessages = mutableStateListOf<String>()
         val username = mutableStateOf<String>("")
+        private var verificationToken: String = ""
 
         fun initConnection(URL: String) {
             val request = Request.Builder().url(URL).build()
@@ -126,6 +127,7 @@ class WSHelper() {
             val request = Request.Builder()
                 .url("http://${BuildConfig.SERVER_IP}:5000/api/${deviceEndpoint}") // Adjust the URL/port as necessary INSIDE build.gradle
                 .post(jsonRequestBody)
+                .header("Authorization", "Bearer $verificationToken")
                 .build()
 
             client.newCall(request).enqueue(object : Callback {
@@ -168,6 +170,12 @@ class WSHelper() {
                         Log.e("Server connection", "Server error: ${response.code}")
                     } else {
                         Log.d("Server connection", "Successfully sent")
+                        // Get the response body as a string
+                        val responseBody = response.body?.string()
+                        // Parse the response body as JSON
+                        val json = JSONObject(responseBody)
+                        // Extract the token from the JSON
+                        verificationToken = json.getString("token")
                         runBlocking {
                             withContext(Dispatchers.Main) {
                                 onSuccess()
