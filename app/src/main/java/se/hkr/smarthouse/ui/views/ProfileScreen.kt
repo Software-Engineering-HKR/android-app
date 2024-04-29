@@ -1,11 +1,8 @@
-package se.hkr.smarthouse
+package se.hkr.smarthouse.ui.views
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,19 +19,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import se.hkr.smarthouse.network.WSHelper
-import se.hkr.smarthouse.ui.theme.SmartHouseTheme
-import se.hkr.smarthouse.view.bottombar.BottomNavItem
-import se.hkr.smarthouse.view.bottombar.BottomNavigation
 
 @Composable
 fun ProfileScreenContent(navController: NavHostController, context: Context){

@@ -1,18 +1,11 @@
 package se.hkr.smarthouse
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Air
 import androidx.compose.material.icons.outlined.BrightnessMedium
@@ -31,21 +24,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
-import se.hkr.smarthouse.ui.composables.DevicesComposables
-import se.hkr.smarthouse.ui.composables.DevicesScreen
+import se.hkr.smarthouse.ui.views.DevicesScreen
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
-import se.hkr.smarthouse.view.bottombar.BottomNavItem
+import se.hkr.smarthouse.ui.views.ProfileScreenContent
+import se.hkr.smarthouse.ui.views.SensorScreenContent
 import se.hkr.smarthouse.view.bottombar.BottomNavigation
 
 class MainActivity : ComponentActivity() {

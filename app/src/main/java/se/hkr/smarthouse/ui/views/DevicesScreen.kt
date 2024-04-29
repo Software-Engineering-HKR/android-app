@@ -1,4 +1,4 @@
-package se.hkr.smarthouse.ui.composables
+package se.hkr.smarthouse.ui.views
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -19,6 +19,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import se.hkr.smarthouse.network.WSHelper
+import se.hkr.smarthouse.ui.composables.DevicesComposables
 
 @Composable
 fun DevicesScreen(navController: NavHostController, focusManager: FocusManager, scrollState: ScrollState, LCDText: MutableState<String>) {

@@ -1,4 +1,4 @@
-package se.hkr.smarthouse
+package se.hkr.smarthouse.ui.views
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.ScrollState
@@ -48,7 +48,7 @@ fun SensorScreenContent(navController: NavHostController, scrollState: ScrollSta
                 //BackButton()
                 Column(
                     verticalArrangement = Arrangement.spacedBy(15.dp)
-                ){ DisplaySensors()}
+                ){ DisplaySensors() }
 
             }
         }
