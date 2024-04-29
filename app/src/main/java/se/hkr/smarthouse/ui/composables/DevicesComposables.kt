@@ -87,6 +87,7 @@ class DevicesComposables() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun LCDMessagesDropdown(LCDmessages: SnapshotStateList<String>, LCDText: MutableState<String>){
         var expanded by remember { mutableStateOf(false) }

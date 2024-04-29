@@ -1,4 +1,4 @@
-package se.hkr.smarthouse
+package se.hkr.smarthouse.ui.views
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.runBlocking
+import se.hkr.smarthouse.MainActivity
 import se.hkr.smarthouse.network.WSHelper
 import se.hkr.smarthouse.ui.theme.SmartHouseTheme
 
@@ -21,11 +28,28 @@ class LoginActivity : ComponentActivity() {
         super.onCreate(savedBundle)
         setContent {
             SmartHouseTheme {
-                LoginScreenContent(onLoginSuccess = {
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                })
+                val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+                // Setting up NavHost with NavGraph
+                NavHost(navController = navController, startDestination = "login") {
+                    composable("login") {
+                        LoginScreenContent(onLoginSuccess = {
+                            // Navigate to the MainActivity on login success
+                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            finish()
+                        }) {
+                            // Navigate to the registration screen when the registration button is clicked
+                            navController.navigate("registration")
+                        }
+                    }
+                    composable("registration") {
+                        RegistrationScreenContent(onRegistrationSuccess = {
+                            // After successful registration, navigate back to the login screen
+                                navController.navigate("login")
+                        })
+                    }
+                }
             }
         }
     }
@@ -33,7 +57,7 @@ class LoginActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreenContent(onLoginSuccess: () -> Unit) {
+fun LoginScreenContent(onLoginSuccess: () -> Unit, onRegistrationClick: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -51,7 +75,7 @@ fun LoginScreenContent(onLoginSuccess: () -> Unit) {
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Email") },
+            label = { Text("Username") },
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Next
             ),
@@ -84,7 +108,7 @@ fun LoginScreenContent(onLoginSuccess: () -> Unit) {
 
         Button(
             onClick = {
-                WSHelper.authenticate(username, password, isRegistration = true, onLoginSuccess) //TODO: display error message on invalid credentials
+                onRegistrationClick()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -92,4 +116,6 @@ fun LoginScreenContent(onLoginSuccess: () -> Unit) {
         }
     }
 }
+
+
 

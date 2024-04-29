@@ -18,7 +18,6 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.json.JSONArray
 import org.json.JSONObject
-import org.mindrot.jbcrypt.BCrypt
 import se.hkr.smarthouse.BuildConfig
 import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.data.Sensor
@@ -144,7 +143,7 @@ class WSHelper() {
             })
         }
 
-        fun authenticate(username: String, password: String, isRegistration: Boolean, onLoginSuccess: () -> Unit) {
+        fun authenticate(username: String, password: String, isRegistration: Boolean, onSuccess: () -> Unit) {
             val json = "application/json; charset=utf-8".toMediaTypeOrNull()
             val jsonRequestBody = "{\"username\":\"$username\", \"password\":\"$password\"}".toRequestBody(json)
             this.username.value = username
@@ -169,7 +168,12 @@ class WSHelper() {
                         Log.e("Server connection", "Server error: ${response.code}")
                     } else {
                         Log.d("Server connection", "Successfully sent")
-                        onLoginSuccess()
+                        runBlocking {
+                            withContext(Dispatchers.Main) {
+                                onSuccess()
+                            }
+                        }
+
                     }
                 }
         })
