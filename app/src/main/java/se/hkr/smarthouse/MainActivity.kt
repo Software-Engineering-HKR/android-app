@@ -160,7 +160,7 @@ class MainActivity : ComponentActivity() {
                         name = "moisture",
                         displayName = "Soil humidity",
                         reading = mutableStateOf(0),
-                        threshold = 100,
+                        threshold = 1,
                         low = "Dry",
                         high = "Moist",
                         icon = Icons.Outlined.WaterDrop

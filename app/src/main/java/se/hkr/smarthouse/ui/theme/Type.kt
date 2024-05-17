@@ -107,17 +107,17 @@ val Typography = Typography(
     labelSmall = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Light,
-        fontSize = 11.sp
+        fontSize = 18.sp
     ),
     labelMedium = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Light,
-        fontSize = 14.sp,
+        fontSize = 20.sp,
         letterSpacing = 0.5.sp
     ),
     labelLarge = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Light,
-        fontSize = 18.sp
+        fontSize = 20.sp
     )
 )
