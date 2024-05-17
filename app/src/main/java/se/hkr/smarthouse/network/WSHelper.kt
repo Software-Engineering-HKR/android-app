@@ -145,7 +145,7 @@ class WSHelper() {
             })
         }
 
-        fun authenticate(username: String, password: String, isRegistration: Boolean, onSuccess: () -> Unit) {
+        fun authenticate(username: String, password: String, isRegistration: Boolean, onSuccess: () -> Unit, onFailure: () -> Unit = {}) {
             val json = "application/json; charset=utf-8".toMediaTypeOrNull()
             val jsonRequestBody = "{\"username\":\"$username\", \"password\":\"$password\"}".toRequestBody(json)
             this.username.value = username
@@ -168,6 +168,7 @@ class WSHelper() {
                 override fun onResponse(call: Call, response: Response) {
                     if (!response.isSuccessful) {
                         Log.e("Server connection", "Server error: ${response.code}")
+                        onFailure()
                     } else {
                         Log.d("Server connection", "Successfully sent")
                         // Get the response body as a string
@@ -175,7 +176,9 @@ class WSHelper() {
                         // Parse the response body as JSON
                         val json = JSONObject(responseBody)
                         // Extract the token from the JSON
-                        verificationToken = json.getString("token")
+                        if(!isRegistration) {
+                            verificationToken = json.getString("token")
+                        }
                         runBlocking {
                             withContext(Dispatchers.Main) {
                                 onSuccess()
