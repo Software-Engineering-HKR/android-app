@@ -3,6 +3,7 @@ package se.hkr.smarthouse.ui.views
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,36 +29,30 @@ import androidx.navigation.NavHostController
 import se.hkr.smarthouse.network.WSHelper
 
 @Composable
-fun ProfileScreenContent(navController: NavHostController, context: Context){
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.Start,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 25.dp, top = 60.dp, end = 25.dp, bottom = 0.dp )
-                        ) {
-                            ProfileCard(
-                                userName = WSHelper.username.value
-                            )
-                            // Settings and logout
-                            SettingsMenuComponent {
-                                val intent = Intent(context, LoginActivity::class.java).apply {
-                                    addFlags(
-                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                                                Intent.FLAG_ACTIVITY_NEW_TASK or
-                                                Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    )
-                                }
-                                context.startActivity(intent)
-                                // Assuming this composable is called from an Activity, you might want to finish it as well
-                                (context as? Activity)?.finish()
-                            }
-                        }
-                    }
+fun ProfileScreenContent(navController: NavHostController, scrollState: ScrollState, context: Context){
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+            ProfileCard(
+                userName = WSHelper.username.value
+            )
+            // Settings and logout
+            SettingsMenuComponent {
+                val intent = Intent(context, LoginActivity::class.java).apply {
+                    addFlags(
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                Intent.FLAG_ACTIVITY_NEW_TASK or
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    )
                 }
+                context.startActivity(intent)
+                // Assuming this composable is called from an Activity, you might want to finish it as well
+                (context as? Activity)?.finish()
+            }
+        }
+    }
 
 @Composable
 fun ProfileCard(userName: String) {
@@ -65,22 +60,19 @@ fun ProfileCard(userName: String) {
         text = "Profile",
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
-        modifier = Modifier.padding(bottom = 30.dp)
+        modifier = Modifier.padding(bottom = 24.dp)
     )
-    Spacer(modifier = Modifier.height(80.dp))
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(horizontal = 30.dp, vertical = 14.dp),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
-            modifier = Modifier.padding(30.dp),
-            verticalArrangement = Arrangement.spacedBy(11.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
         ) {
-
             Text(
-                text = "Name: $userName",
-                modifier = Modifier.padding(bottom = 20.dp),
+                text = "Username: $userName",
                 style = MaterialTheme.typography.bodyLarge,
                 //color = MaterialTheme.colorScheme.secondary,
             )
@@ -90,17 +82,17 @@ fun ProfileCard(userName: String) {
 
 @Composable
 fun SettingsMenuComponent(onLogout: () -> Unit) {
-    Spacer(modifier = Modifier.height(20.dp))
     Button(onClick = onLogout, modifier = Modifier
-        .fillMaxWidth() // Set the width to match the parent
-        .padding(horizontal = 25.dp)) {
+        .fillMaxWidth()
+        .padding(horizontal = 30.dp)) {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
+
             ) {
                 Text(
                     text = "Log out",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(30f)
                 )
                 Icon(Icons.Rounded.ExitToApp, contentDescription = null)

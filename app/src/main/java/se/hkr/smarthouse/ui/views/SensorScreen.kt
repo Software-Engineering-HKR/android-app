@@ -1,6 +1,5 @@
 package se.hkr.smarthouse.ui.views
 
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -21,8 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import se.hkr.smarthouse.data.Sensor
 import se.hkr.smarthouse.network.WSHelper
@@ -33,75 +32,42 @@ fun SensorScreenContent(navController: NavHostController, scrollState: ScrollSta
         modifier = Modifier
             .verticalScroll(state = scrollState)
             .fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween // Ensures bottom navigation is at the bottom
     ) {
         Column(
-            modifier = Modifier.fillMaxHeight(0.9f),
-            // Ensure room for the navigation bar
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.fillMaxHeight(),
         ) {
             Column(
                 modifier = Modifier
                     .padding(16.dp) ,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                //BackButton()
+                Text(
+                    text = "Sensors",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 32.sp,
+                    //modifier = Modifier.padding(bottom = 24.dp)
+                )
                 Column(
                     verticalArrangement = Arrangement.spacedBy(15.dp)
-                ){ DisplaySensors() }
-
+                ){
+                    WSHelper.sensors.forEach { sensor ->
+                        SensorCard(sensor = sensor)
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun BackButton() {
-    val context = LocalContext.current
-    Button(onClick = { (context as? ComponentActivity)?.finish() }) {
-        Text("Back")
-    }
-}
-
-@Composable
-fun DisplaySensors() {
-    WSHelper.sensors.forEach { sensor ->
-        SensorIndicator(sensor = sensor)
-    }
-}
-
-@Composable
-fun SensorIndicator(sensor: Sensor) {
-    /*Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 0.4.dp),
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(30.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = sensor.displayName, style = MaterialTheme.typography.bodyLarge)
-            Text(
-                //text = if (sensor.status.value) "ON" else "OFF",
-                //color = if (sensor.status.value) Color.Blue else Color.Gray
-                text = if (sensor.reading.value < sensor.threshold) sensor.low else sensor.high,
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    }*/
-
+fun SensorCard(sensor: Sensor) {
     ElevatedCard(
         Modifier
             .fillMaxWidth()
             .padding(0.4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = if (sensor.reading.value < sensor.threshold) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = if (sensor.reading.value < sensor.threshold) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
         )
     ) {
 
@@ -141,7 +107,6 @@ fun SensorIndicator(sensor: Sensor) {
             Column(
                 horizontalAlignment = Alignment.End,
                 modifier = Modifier
-                    .widthIn(40.dp)
                     .padding(end = 8.dp),
             ) {
                 Text(

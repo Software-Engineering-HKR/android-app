@@ -38,8 +38,8 @@ fun BottomNavigation(
     navController: NavHostController
 ) {
     BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.background,
-        contentColor = MaterialTheme.colorScheme.primary
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
@@ -50,7 +50,7 @@ fun BottomNavigation(
                 icon = {
                     Icon(imageVector = item.icon, contentDescription = item.title)
                 },
-                label = { Text(item.title) },
+                label = { Text(item.title, style = MaterialTheme.typography.labelSmall) },
                 alwaysShowLabel = true
             )
         }

@@ -33,7 +33,6 @@ fun DevicesScreen(navController: NavHostController, focusManager: FocusManager, 
             verticalArrangement = Arrangement.spacedBy(15.dp),
 
             ) {
-            // A surface container using the 'background' color from the theme
             Surface(
                 modifier = Modifier
                     .fillMaxSize()
@@ -48,15 +47,6 @@ fun DevicesScreen(navController: NavHostController, focusManager: FocusManager, 
                         .fillMaxSize()
                         .padding(horizontal = 16.dp, vertical = 16.dp)
                 ) {
-                    /*Text(
-                    text = "Welcome, user!",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = Color.Black,
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(horizontal = 16.dp)
-                )*/
-
                     val mainScreenComposables = DevicesComposables()
                     mainScreenComposables.TextInputCard(
                         LCDText,

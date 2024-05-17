@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
@@ -36,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -52,35 +55,42 @@ class DevicesComposables() {
     fun TextInputCard(LCDText: MutableState<String>, LCDmessages: SnapshotStateList<String>) {
         ElevatedCard(
             Modifier
-                .fillMaxWidth()
-                .padding(0.4.dp),
+                .fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(top = 16.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
                     .fillMaxWidth()
             ) {
                 Column(
                 ) {
-                    LCDMessagesDropdown(LCDmessages, LCDText)
-                    LCDTextInputField(LCDText)
+                    Text(
+                        text = "Set your message",
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .padding(horizontal = 4.dp)
+                    )
                     if (!LCDmessages.isEmpty()){
                         Text(
                             text = "Current message: ${LCDmessages[LCDmessages.size-1]}", // TODO : display last message even if it didn't get added to LCDmessages
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.secondary,
+                            style = MaterialTheme.typography.headlineSmall,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.CenterHorizontally)
-                                .padding(vertical = 4.dp)
+                                .padding(horizontal = 4.dp)
+                                .alpha(0.9f)
                         )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        LCDMessagesDropdown(LCDmessages, LCDText)
                     }
+                    LCDTextInputField(LCDText)
                     LCDButton(message = LCDText, focusManager = LocalFocusManager.current)
                 }
             }
@@ -137,6 +147,7 @@ class DevicesComposables() {
     }
 
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun LCDTextInputField(text: MutableState<String>) {
         val focusManager = LocalFocusManager.current
@@ -158,7 +169,7 @@ class DevicesComposables() {
                             focusManager.clearFocus()
                           },
                 modifier = Modifier
-                .padding(top = 4.dp)
+                    .padding(top = 6.dp)
                 .fillMaxWidth()
         ) {
                 Text("Set new message".uppercase())
@@ -172,11 +183,7 @@ class DevicesComposables() {
             onCheckedChange = { isChecked ->
                 WSHelper.toggleDevice(device.status, device.endpoint)
                 device.status.value = isChecked
-            }, colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colorScheme.secondary,
-                checkedTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                uncheckedThumbColor = MaterialTheme.colorScheme.primary,
-                uncheckedTrackColor = MaterialTheme.colorScheme.primaryContainer,)
+            }
         )
     }
 
@@ -185,9 +192,11 @@ class DevicesComposables() {
         ElevatedCard(
             Modifier
                 .fillMaxWidth()
-                .padding(0.4.dp),
+                .padding(0.4.dp)
+                .alpha(if (device.status.value) 1.0f else 0.5f),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = if (!device.status.value) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = if (!device.status.value) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
             )
         ) {
 

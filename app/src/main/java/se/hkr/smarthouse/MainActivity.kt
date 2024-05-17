@@ -98,20 +98,9 @@ class MainActivity : ComponentActivity() {
                         icon = Icons.Outlined.RollerShades
                     )
                 )
-                add(
-                    Device(
-                        name = "lock",
-                        endpoint = "lock",
-                        displayName = "Lock door",
-                        status = remember { mutableStateOf(false) },
-                        statusMaskTrue = "Locked",
-                        statusMaskFalse = "Unlocked",
-                        icon = Icons.Outlined.LockOpen
-                    )
-                )
             }
             WSHelper.sensors.apply {
-                add(
+                /*add(
                     Sensor(
                         name = "doorbell",
                         displayName = "Doorbell",
@@ -119,7 +108,7 @@ class MainActivity : ComponentActivity() {
                         threshold = 1,
                         icon = Icons.Outlined.Doorbell
                     )
-                )
+                )*/
                 add(
                     Sensor(
                         name = "motion",
@@ -195,7 +184,7 @@ class MainActivity : ComponentActivity() {
                                 SensorScreenContent(navController, scrollState)
                             }
                             composable("Profile") {
-                                ProfileScreenContent(navController, context = this@MainActivity)
+                                ProfileScreenContent(navController, scrollState = scrollState, context = this@MainActivity)
                             }
                         }
                     }

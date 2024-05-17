@@ -94,7 +94,7 @@ fun LoginScreenContent(onLoginSuccess: () -> Unit, onRegistrationClick: () -> Un
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Login", style = MaterialTheme.typography.headlineMedium)
+                Text("Log in", style = MaterialTheme.typography.headlineMedium)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
