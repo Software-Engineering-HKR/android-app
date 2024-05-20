@@ -29,8 +29,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".SensorScreen" />
-        <activity android:name=".Profile" />
     </application>
 
 </manifest>

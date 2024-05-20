@@ -23,7 +23,7 @@ import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.data.Sensor
 import java.io.IOException
 
-class WSHelper() {
+class WSHelper {
     companion object {
         private val client = OkHttpClient()
         private var webSocket: WebSocket? = null
@@ -115,7 +115,7 @@ class WSHelper() {
             webSocket?.close(1000, "Closing Connection")
         }
 
-        public fun toggleDevice(currentStatus: MutableState<Boolean>, deviceEndpoint: String) {
+        fun toggleDevice(currentStatus: MutableState<Boolean>, deviceEndpoint: String) {
             val newStatus = if (currentStatus.value) "0" else "1"
             sendMessage(newStatus, deviceEndpoint, "command")
         }

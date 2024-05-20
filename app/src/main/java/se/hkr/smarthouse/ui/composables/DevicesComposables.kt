@@ -50,7 +50,7 @@ import se.hkr.smarthouse.data.Device
 import se.hkr.smarthouse.network.WSHelper
 
 
-class DevicesComposables() {
+class DevicesComposables {
     @Composable
     fun TextInputCard(LCDText: MutableState<String>, LCDmessages: SnapshotStateList<String>) {
         ElevatedCard(
@@ -68,8 +68,7 @@ class DevicesComposables() {
                     .padding(top = 16.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
                     .fillMaxWidth()
             ) {
-                Column(
-                ) {
+                Column {
                     Text(
                         text = "Set your message",
                         style = MaterialTheme.typography.headlineMedium,
